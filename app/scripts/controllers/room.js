@@ -1,7 +1,18 @@
 'use strict';
 
  angular.module('youKaraokeApp')
- .controller('RoomCtrl', function ($scope, $routeParams, $http) {
+ .controller('RoomCtrl', function ($scope, $http, auth, localStorageService, $routeParams, $location, fb) {
+ 	localStorageService.set("lastsite", $routeParams.id);
+ 	if(!auth.getCurrentUser()){
+ 		$location.path('/main');
+ 	}
+ 	$scope.currentUser = auth.getCurrentUser();
+
+ 	fb.ref.on('child_added', function(dataSnapshot){
+ 		console.log(dataSnapshot.val());
+ 	})
+ 	// fb.room[$routeParams.id].push($scope.currentUser);
+
  	var tag = document.createElement('script');
  	tag.src = "https://www.youtube.com/iframe_api";
  	var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -61,11 +72,7 @@
 	 	})
  		.success(function(res) {
  			$scope.searchResults = res.items;
-			// document.getElementById("search-results").innerHTML = "";
- 		// 	var results = res.items.forEach(function(vid) {
- 		// 		document.getElementById("search-results").insertAdjacentHTML("beforeend", "<div class='result col-lg-3'><img src='http://img.youtube.com/vi/"+vid.id.videoId+"/default.jpg' /><p>"+vid.snippet.title+"</p></div>");
- 		// 	})
-
  		})
+
  	}
- });
+});

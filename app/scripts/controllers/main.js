@@ -17,12 +17,18 @@
  			} else {
  				console.log("Authenticated successfully with payload:", authData);
  				auth.setCurrentUser(authData);
- 				$location.path('/create');
- 				$scope.$apply();
-
+ 				
+ 				if(localStorage["ls.lastsite"]){
+ 					$location.path('/room/'+localStorage["ls.lastsite"]);
+ 				}
+ 				else{
+ 					$location.path('/create');
+ 					$scope.$apply();
+ 				}
  			}
  		},{
  			scope: "https://www.googleapis.com/auth/youtube, https://www.googleapis.com/auth/plus.login"
  		});
  	}	
+ 	console.log(localStorage["ls.lastsite"]);
 });
