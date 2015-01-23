@@ -35,17 +35,20 @@
  		console.log(data);
  	})*/
 
- 	$http({
+//correct
+/* 	$http({
  		url: "https://www.googleapis.com/youtube/v3/subscriptions?",
  		method: "GET",
  		params: {
  			part:"snippet",
- 			key: api
+ 			key: api,
+ 			mySubscribers: true
  		},
  		headers:{
- 			Authorization: creator.data.google.accessToken
+ 			Authorization: 'Bearer ' + creator.data.google.accessToken
  		}
- 	})
+ 	})*/
+
 
  	$scope.click = function(){
 
@@ -77,11 +80,13 @@
  				key: api
  			},
  			data: {
- 				'title': 'New Playlist',
- 				'description': 'Sample playlist'
+ 				snippet:{
+	 				'title': 'New Playlist',
+	 				'description': 'Sample playlist'
+	 			}
  			},
  			headers: {
- 				Authorization: creator.data.google.accessToken
+ 				Authorization: 'Bearer ' + creator.data.google.accessToken
  			}
  		})
  		.success(function(data) {
