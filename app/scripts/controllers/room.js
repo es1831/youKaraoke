@@ -45,27 +45,26 @@
  	}
 
  	// my crappy functions
+ 	$scope.searchResults = [];
  	$scope.search = function(query) {
  		$http({
 	 		url: "https://www.googleapis.com/youtube/v3/search",
 	 		method: "GET",
 	 		params: {
 	 			part: "snippet",
-	 			q: "karaoke " + query
+	 			q: "karaoke " + query,
+	 			maxResults: 4
 	 		},
 	 		headers: {
 	 				Authorization: 'Bearer ya29.BAHqTD8wrPOD8mhXwVlImR-1EmbI-WBhuhYkv5sX5U7TamO_gvoF1SHIvdFxjny6BmFF2WS8-cyXew'
 	 			}
 	 	})
  		.success(function(res) {
- 			console.log(res);
- 			var results = res.items.forEach(function(vid) {
- 				
- 				// var div = document.createElement('div');
- 				// div.innerHTML = "<img src='http://img.youtube.com/vi/"+vid.id.videoId+"/default.jpg' />"
- 				// console.log(div);
- 				document.body.insertAdjacentHTML("afterend", "<img src='http://img.youtube.com/vi/"+vid.id.videoId+"/default.jpg' />");
- 			})
+ 			$scope.searchResults = res.items;
+			// document.getElementById("search-results").innerHTML = "";
+ 		// 	var results = res.items.forEach(function(vid) {
+ 		// 		document.getElementById("search-results").insertAdjacentHTML("beforeend", "<div class='result col-lg-3'><img src='http://img.youtube.com/vi/"+vid.id.videoId+"/default.jpg' /><p>"+vid.snippet.title+"</p></div>");
+ 		// 	})
 
  		})
  	}

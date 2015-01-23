@@ -69,7 +69,7 @@ body {
 }
 
 /* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
+@media screen and (max-width: 768px) {
   .container {
     max-width: 730px;
   }
@@ -89,4 +89,13 @@ body {
   .jumbotron {
     border-bottom: 0;
   }
+}
+
+#search-results {
+}
+
+.result {
+  display: inline;
+  padding: 5px;
+  text-align: center;
 }
