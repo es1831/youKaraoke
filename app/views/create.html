@@ -1,0 +1,21 @@
+<p>This is the create view.</p>
+
+
+<accordion-group heading="Create Room">
+<form name="userForm" ng-submit="save(user)">
+
+	<div class="form-group">
+		<input class="form-control" ng-model="playlist.title" placeholder="title">
+	</div>
+
+	<div class="form-group">
+<textarea class="form-control" ng-model="playlist.description" placeholder="Describe your room!" title="description"></textarea>
+	</div>
+
+	<button type="submit" class="btn btn-default pull-right" ng-click="createPlaylist()">
+		Let's Party
+	</button>
+	<button class="btn btn-default pull-right" ng-click="click()">
+		CLick
+	</button>
+</accordion-group>
