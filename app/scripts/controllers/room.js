@@ -9,24 +9,25 @@ angular.module('youKaraokeApp')
         $scope.currentUser = auth.getCurrentUser();
         $scope.users = [];
 
-        /* 	fb.ref.on('child_added', function(dataSnapshot){
-         		console.log(dataSnapshot.val());
-         	})
-         	 	console.log($routeParams.id);*/
+        //CREATOR
+        var creatorRef = fb.room.child($routeParams.id).child("creator");
+        
+        creatorRef.on('value', function(dataSnapshot){
+        	$scope.creator = dataSnapshot.val();
+        }) 	 	
 
+        $scope.isCreator = function(){
+        	if($scope.creator.uid === $scope.currentUser.uid){
+        		return true;
+        	}
+        	else{
+        		return false;
+        	}
+        }
+
+
+        //USERS
         var usersRef = fb.room.child($routeParams.id).child("users");
-        /* 		var firebaseUsers = usersRef.$asArray();
-         		console.log("firbase ", firebaseUsers);
-         		usersRef.child("0/uid").once('value', function(dataSnapshot){
-         			console.log("please be the naem ", dataSnapshot.val());
-         		});*/
-
-
-
-
-
-
-        /*console.log('this is usersRef: ', thing);*/
         
 
         usersRef.on('child_added', function(dataSnapshot) {
