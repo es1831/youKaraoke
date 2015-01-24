@@ -7,11 +7,24 @@
  		$location.path('/main');
  	}
  	$scope.currentUser = auth.getCurrentUser();
+ 	$scope.users = [];
 
  	fb.ref.on('child_added', function(dataSnapshot){
  		console.log(dataSnapshot.val());
  	})
- 	// fb.room[$routeParams.id].push($scope.currentUser);
+ 	 	console.log($routeParams.id);
+ 	var usersRef = fb.room.child($routeParams.id).child("users");
+ 	usersRef.push($scope.currentUser);
+
+ 	usersRef.on('child_added', function(dataSnapshot) {
+ 		console.log("CHILD ADDED TO USERS", dataSnapshot.val().data.google.displayName);
+ 		$scope.$apply(function() {
+ 			$scope.users.push(dataSnapshot.val().data.google.displayName);
+ 		})
+ 	});
+
+
+//melissa
 
  	var tag = document.createElement('script');
  	tag.src = "https://www.youtube.com/iframe_api";
