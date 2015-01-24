@@ -35,65 +35,70 @@
 	 				'onStateChange': onPlayerStateChange
 	 			}
 	 		});
-	 }
+	 };
 
  	function onPlayerReady(evt) {
 	 		$scope.player.loadPlaylist({
-	 			listType: "playlist",
-	 			list: "PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX" // whatever the playlist id actually is
+	 			listType: 'playlist',
+	 			list: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX' // whatever the playlist id actually is
 	 		})
  		// evt.target.playVideo();
- 	}
+ 	};
  	function onPlayerStateChange(evt) {
  		if (evt.data == YT.PlayerState.PLAYING && !done) {
  			setTimeout(stopVideo, 6000);
  			done = true;
  		}
- 	}
+ 	};
  	function stopVideo() {
  		$scope.player.stopVideo();
- 	}
+ 	};
 
  	// my crappy functions
  	$scope.searchResults = [];
  	$scope.search = function(query) {
  		$http({
-	 		url: "https://www.googleapis.com/youtube/v3/search",
-	 		method: "GET",
+	 		url: 'https://www.googleapis.com/youtube/v3/search',
+	 		method: 'GET',
 	 		params: {
-	 			part: "snippet",
-	 			q: "karaoke " + query,
+	 			part: 'snippet',
+	 			q: 'karaoke ' + query,
 	 			maxResults: 4
 	 		},
 	 		headers: {
-	 				Authorization: 'Bearer ya29.BAE5Zt5ET5BEc1V6thMNeDXDIDkgip_-FU9rg_SFe-HRqf94XgztziRMxbwVrsux8MggCaYu3jm9pw'
+	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
 	 			}
 	 	})
  		.success(function(res) {
  			$scope.searchResults = res.items;
  		});
- 	}
+ 	};
 
  	$scope.addToPlaylist = function(videoId) {
+ 		console.log(videoId);
  		$http({
-	 		url: "https://www.googleapis.com/youtube/v3/playlistItems",
-	 		method: "POST",
+	 		url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+	 		method: 'POST',
 	 		params: {
-	 			part: "snippet",
+	 			part: 'snippet',
 	 		},
 	 		data: {
 	 			snippet: {
-	 				playlistId: "PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX",
-	 				resourceId: videoId
-	 			}
+	 				playlistId: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX',
+	 				resourceId: {
+	 					kind: 'youtube#video',
+	 					videoId: videoId
+	 				}
+	 			},
+
 	 		},
 	 		headers: {
-	 				Authorization: 'Bearer ya29.BAE5Zt5ET5BEc1V6thMNeDXDIDkgip_-FU9rg_SFe-HRqf94XgztziRMxbwVrsux8MggCaYu3jm9pw'
+	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
 	 			}
 	 	})
  		.success(function(res) {
  			console.log(res);
- 			angular.element("#"+videoId).css{display: block};
+ 			angular.element('#'+videoId).css({display: 'block'});
  		});
- 	}
+ 	};
 });
