@@ -1,9 +1,24 @@
-<p>This is the room view.</p>
-
-<!-- <iframe id="player" type="text/html" width="player.width" height="player.height"
-  src=""
-  frameborder="0"></iframe> -->
-
-<div id="player">
+<div class="container">
+	<div class="row">
+		<div id="player" class="center-block"></div>
+		<div class="center-block">
+			<form id="center" ng-submit="search(query)">
+				<input type="text" ng-model="query" /> 
+				<button class="btn btn-default">Search</button>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-12" id="search-results">
+			<ul>
+				<li class="result col-lg-3" ng-repeat="result in searchResults">
+					<a href="#" ng-click="addToPlaylist(result.id.videoId)">
+					<img src="http://img.youtube.com/vi/{{result.id.videoId}}/default.jpg" />
+					<p>{{result.snippet.title}}</p>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
 {{users}}
 </div>
