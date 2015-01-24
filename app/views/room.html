@@ -15,6 +15,7 @@
 					<a href="#" ng-click="addToPlaylist(result.id.videoId)">
 					<img src="http://img.youtube.com/vi/{{result.id.videoId}}/default.jpg" />
 					<p>{{result.snippet.title}}</p>
+					<div class="added-message bg-info" id="{{result.id.videoId}}">Added to playlist</div>
 					</a>
 				</li>
 			</ul>

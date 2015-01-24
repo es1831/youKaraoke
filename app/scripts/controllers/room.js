@@ -9,9 +9,8 @@
  	$scope.currentUser = auth.getCurrentUser();
 
  	fb.ref.on('child_added', function(dataSnapshot){
- 		console.log(dataSnapshot.val());
+ 		// console.log(dataSnapshot.val());
  	})
- 	// fb.room[$routeParams.id].push($scope.currentUser);
 
  	var tag = document.createElement('script');
  	tag.src = "https://www.youtube.com/iframe_api";
@@ -41,7 +40,7 @@
  	function onPlayerReady(evt) {
 	 		$scope.player.loadPlaylist({
 	 			listType: "playlist",
-	 			list: "PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX" // $routeParams.id
+	 			list: "PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX" // whatever the playlist id actually is
 	 		})
  		// evt.target.playVideo();
  	}
@@ -67,12 +66,34 @@
 	 			maxResults: 4
 	 		},
 	 		headers: {
-	 				Authorization: 'Bearer ya29.BAHqTD8wrPOD8mhXwVlImR-1EmbI-WBhuhYkv5sX5U7TamO_gvoF1SHIvdFxjny6BmFF2WS8-cyXew'
+	 				Authorization: 'Bearer ya29.BAE5Zt5ET5BEc1V6thMNeDXDIDkgip_-FU9rg_SFe-HRqf94XgztziRMxbwVrsux8MggCaYu3jm9pw'
 	 			}
 	 	})
  		.success(function(res) {
  			$scope.searchResults = res.items;
- 		})
+ 		});
+ 	}
 
+ 	$scope.addToPlaylist = function(videoId) {
+ 		$http({
+	 		url: "https://www.googleapis.com/youtube/v3/playlistItems",
+	 		method: "POST",
+	 		params: {
+	 			part: "snippet",
+	 		},
+	 		data: {
+	 			snippet: {
+	 				playlistId: "PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX",
+	 				resourceId: videoId
+	 			}
+	 		},
+	 		headers: {
+	 				Authorization: 'Bearer ya29.BAE5Zt5ET5BEc1V6thMNeDXDIDkgip_-FU9rg_SFe-HRqf94XgztziRMxbwVrsux8MggCaYu3jm9pw'
+	 			}
+	 	})
+ 		.success(function(res) {
+ 			console.log(res);
+ 			angular.element("#"+videoId).css{display: block};
+ 		});
  	}
 });
