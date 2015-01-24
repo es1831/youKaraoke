@@ -16,10 +16,7 @@ angular.module('youKaraokeApp')
 	return {
 
 	setCurrentUser : function(userData){
-    	CurrentUser = {
-    		data:userData,
-    		role: "user"
-    	}
+    	CurrentUser = userData;
     	localStorageService.set('user', CurrentUser);
 
     	console.log('user set:', CurrentUser);
@@ -28,15 +25,7 @@ angular.module('youKaraokeApp')
     getCurrentUser : function(){
     	CurrentUser = localStorageService.get('user');
     	return CurrentUser;
-    },
-
-    setAdmin : function(){
-    	CurrentUser.role = "admin";
-    },
+    }
     
-    isAdmin : function() {
-        return CurrentUser.role === 'admin';
-      }
-
 	}
 })
