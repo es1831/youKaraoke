@@ -12,18 +12,49 @@ angular.module('youKaraokeApp')
         //CREATOR
         var creatorRef = fb.room.child($routeParams.id).child("creator");
         
-        creatorRef.on('value', function(dataSnapshot){
+        creatorRef.once('value', function(dataSnapshot){
         	$scope.creator = dataSnapshot.val();
-        }) 	 	
+	        $scope.isCreator = function(){
+	        	if($scope.creator.uid === $scope.currentUser.uid){
+	        		return true;
+	        	}
+	        	else{
+	        		return false;
+	        	}
+	        }
+        }) 
 
-        $scope.isCreator = function(){
-        	if($scope.creator.uid === $scope.currentUser.uid){
-        		return true;
-        	}
-        	else{
-        		return false;
-        	}
-        }
+        //PLAYLIST
+
+        var playlistRef = fb.room.child($routeParams.id).child("playlist");
+
+        playlistRef.on('value', function(dataSnapshot){
+        	localStorageService.set("playlist", dataSnapshot.val());
+        	console.log("this is a playlist: ", localStorage["ls.playlist"]);
+        })
+
+        $scope.playlist = JSON.parse(localStorage["ls.playlist"]);
+ 
+
+
+//ASYNC ISSUES
+//
+//
+//
+
+/*        playlistRef.on('value', function(dataSnapshot){
+        	$scope.$apply(function(){
+        		$scope.playlist = dataSnapshot.val();
+        		console.log("this is a playlist: ", $scope.playlist);
+        	})
+
+        }) 
+        console.log("this is a playlist outside: ", $scope.playlist);*/
+
+
+
+
+
 
 
         //USERS
@@ -32,12 +63,12 @@ angular.module('youKaraokeApp')
 
         usersRef.on('child_added', function(dataSnapshot) {
             console.log("CHILD ADDED TO USERS", dataSnapshot.val().google.displayName);
-            $scope.$apply(function() {
                 if ($scope.users.indexOf(dataSnapshot.val().google.displayName) === -1) {
-                    $scope.users.push(dataSnapshot.val().google.displayName);
-                    usersRef.push($scope.currentUser);
+                	$scope.$apply(function() {
+                    	$scope.users.push(dataSnapshot.val().google.displayName);
+                    	usersRef.push($scope.currentUser);
+                    })
                 }
-            })
         });
 
         usersRef.on('child_removed', function(oldChildSnapshot) {
@@ -78,7 +109,7 @@ angular.module('youKaraokeApp')
  	function onPlayerReady(evt) {
  		$scope.player.loadPlaylist({
  			listType: 'playlist',
- 			list: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX' // whatever the playlist id actually is
+ 			list: $scope.playlist[0].id // whatever the playlist id actually is
  		});
  		// evt.target.playVideo();
 		$http({
@@ -86,11 +117,11 @@ angular.module('youKaraokeApp')
  			method: 'GET',
  			params: {
  				part: 'snippet',
- 				playlistId: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX', // whatever the playlist id actually is
+ 				playlistId: $scope.playlist[0].id, // whatever the playlist id actually is
  				maxResults: 50
  			},
  			headers: {
- 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+ 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 	 		}
  		})
  		.success(function(res) {
@@ -130,7 +161,7 @@ angular.module('youKaraokeApp')
 	 			maxResults: 4
 	 		},
 	 		headers: {
- 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+ 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 	 		}
 	 	})
  		.success(function(res) {
@@ -146,7 +177,7 @@ angular.module('youKaraokeApp')
 				index = $scope.player.getPlaylistIndex();
 				$scope.player.loadPlaylist({
 					listType: 'playlist',
-					list: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX', // whatever the playlist id actually is
+					list: $scope.playlist[0].id, // whatever the playlist id actually is
 					index: index
 				});
 			}
@@ -163,7 +194,7 @@ angular.module('youKaraokeApp')
 	 		},
 	 		data: {
 	 			snippet: {
-	 				playlistId: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX',
+	 				playlistId: $scope.playlist[0].id,
 	 				resourceId: {
 	 					kind: 'youtube#video',
 	 					videoId: videoId
@@ -171,7 +202,7 @@ angular.module('youKaraokeApp')
 	 			}
 	 		},
 	 		headers: {
-	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 	 			}
 	 	})
  		.success(function(res) {
@@ -183,11 +214,11 @@ angular.module('youKaraokeApp')
 	 			method: 'GET',
 	 			params: {
 	 				part: 'snippet',
-	 				playlistId: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX', // whatever the playlist id actually is
+	 				playlistId: $scope.playlist[0].id, // whatever the playlist id actually is
 	 				maxResults: 50
 	 			},
 	 			headers: {
-	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 		 		}
 	 		})
 	 		.success(function(res) {
@@ -205,7 +236,7 @@ angular.module('youKaraokeApp')
 	 			id: id
 	 		},
 	 		headers: {
-	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 	 		}
 	 	})
  		.success(function(res) {
@@ -215,11 +246,11 @@ angular.module('youKaraokeApp')
 	 			method: 'GET',
 	 			params: {
 	 				part: 'snippet',
-	 				playlistId: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX', // whatever the playlist id actually is
+	 				playlistId: $scope.playlist[0].id, // whatever the playlist id actually is
 	 				maxResults: 50
 	 			},
 	 			headers: {
-	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 		 		}
 	 		})
 	 		.success(function(res) {

@@ -28,13 +28,16 @@
  			url: "https://www.googleapis.com/youtube/v3/playlists",
  			method: "POST",
  			params: {
- 				part: 'snippet',
+ 				part: 'snippet, status',
  				key: api
  			},
  			data: {
  				snippet:{
  					'title': $scope.playlist.title,
  					'description': $scope.playlist.description
+ 				},
+ 				status:{
+ 					'privacyStatus': 'public'
  				}
  			},
  			headers: {
