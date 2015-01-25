@@ -1,18 +1,37 @@
-<p>This is the create view.</p>
-
-
 <accordion-group heading="Create Room">
 <form name="userForm" ng-submit="save(user)">
 
 	<div class="form-group">
-		<input class="form-control" ng-model="playlist.title" placeholder="title">
+		<input class="form-control" ng-model="playlist.title" placeholder="Title">
 	</div>
 
 	<div class="form-group">
 <textarea class="form-control" ng-model="playlist.description" placeholder="Describe your room!" title="description"></textarea>
 	</div>
+	<div class="form-group">
+		<div class="center-block" ng-show="!videoId.length">
+			Choose a song to start off your playlist! (required)
+			<div>
+				<input type="text" ng-model="query" /> 
+				<button type="button" class="btn btn-default" ng-click="search(query)">Search</button>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-lg-12" id="search-results">
+			<ul class="unstyled">
+				<li class="result col-lg-3" ng-repeat="result in searchResults">
+					<a ng-click="addToIdsArray(result.id.videoId)" ng-disabled="videoId.length">
+					<img src="http://img.youtube.com/vi/{{result.id.videoId}}/default.jpg" />
+					<p>{{result.snippet.title}}</p>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div ng-show="videoId.length" class="bg-success center-block">Song added to playlist!</div>
+	</div>
 
-	<button type="submit" class="btn btn-default pull-right" ng-click="createPlaylist()">
+	<button type="submit" class="btn btn-default pull-right" ng-click="createPlaylist()" ng-disabled="!videoId.length || !playlist.title.length">
 		Let's Party
 	</button>
 </accordion-group>

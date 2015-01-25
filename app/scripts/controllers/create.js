@@ -13,17 +13,41 @@
  	var api = "AIzaSyABJumn6ZK-Ru4vt1U0hq7wQA99Z6EhXLE";
  	var oAuth = "900189317018-kphukaabv9r3sljqf6hunvfg91s7ihir.apps.googleusercontent.com";
  	
+ 	$scope.videoId = "";
+ 	$scope.searchResults = [];
  	$scope.room = {
  		creator: creator,
  		playlist: [],
  		users: []
  	}
+
  	console.log(creator);
- 	
  	$scope.room.users.push(creator);
 
- 	$scope.createPlaylist = function(){
+ 	$scope.search = function(query) {
+ 		$http({
+	 		url: 'https://www.googleapis.com/youtube/v3/search',
+	 		method: 'GET',
+	 		params: {
+	 			part: 'snippet',
+	 			q: 'karaoke ' + query,
+	 			maxResults: 4
+	 		},
+	 		headers: {
+ 				Authorization: 'Bearer ' + creator.google.accessToken
+	 		}
+	 	})
+ 		.success(function(res) {
+ 			$scope.searchResults = res.items;
+ 		});
+ 	};
 
+ 	$scope.addToIdsArray = function(videoId) {
+ 		$scope.videoId = videoId;
+ 		angular.element('#search-results').css({display: 'none'});
+ 	}
+
+ 	$scope.createPlaylist = function(){
  		$http({
  			url: "https://www.googleapis.com/youtube/v3/playlists",
  			method: "POST",
@@ -45,12 +69,34 @@
  			}
  		})
  		.success(function(playlist) {
- 			$scope.room.playlist.push(playlist);
  			console.log(playlist);
+ 			$scope.room.playlist.push(playlist);
  			var key = fb.room.push($scope.room);
  			var roomKey = key.toString().split("room/")[1];
- 			$location.path('/room/' + roomKey);
- 		})
+
+ 			$http({
+	 		url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+	 		method: 'POST',
+	 		params: {
+	 			part: 'snippet',
+	 		},
+	 		data: {
+	 			snippet: {
+	 				playlistId: playlist.id,
+	 				resourceId: {
+	 					kind: 'youtube#video',
+	 					videoId: $scope.videoId
+	 				}
+	 			}
+	 		},
+	 		headers: {
+	 				Authorization: 'Bearer ' + creator.google.accessToken
+	 			}
+		 	})
+		 	.success(function(){
+	 			$location.path('/room/' + roomKey);
+		 	});
+ 		});
  	}
 
  });
