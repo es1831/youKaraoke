@@ -70,7 +70,8 @@
 	 		}
  		})
  		.success(function(res) {
- 			$scope.queue = res.items.map(function(item) {return {title: item.snippet.title, status: 'non'}});
+ 			console.log(res);
+ 			$scope.queue = res.items.map(function(item) {return {title: item.snippet.title, id: item.id, status: 'non'}});
  			$scope.queue[0].status = 'current';
  		});
  	};
@@ -81,6 +82,7 @@
  		}
  		if (evt.data == 0) {
  			var i = $scope.player.getPlaylistIndex();
+ 			// shhhhhh it's going to be okay
  			if ($scope.queue[i - 1].status !== 'non' || i === 1) {
 	 			$scope.queue[i - 1].status = 'non';
 	 			$scope.queue[i].status = 'current';
@@ -94,6 +96,7 @@
 
  	$scope.searchResults = [];
  	$scope.search = function(query) {
+ 		$scope.query = "";
  		$http({
 	 		url: 'https://www.googleapis.com/youtube/v3/search',
 	 		method: 'GET',
@@ -128,7 +131,6 @@
 	}
 
  	$scope.addToPlaylist = function(videoId) {
- 		console.log(videoId);
  		$http({
 	 		url: 'https://www.googleapis.com/youtube/v3/playlistItems',
 	 		method: 'POST',
@@ -165,9 +167,41 @@
 		 		}
 	 		})
 	 		.success(function(res) {
-	 			$scope.queue = res.items.map(function(item) {return {title: item.snippet.title, status: 'non'}});
+	 			$scope.queue = res.items.map(function(item) {return {title: item.snippet.title, id: item.id, status: 'non'}});
 	 			$scope.queue[$scope.player.getPlaylistIndex()].status = 'current';
 	 		});
  		});
  	};
+
+ 	$scope.removeFromPlaylist = function(id) {
+ 		$http({
+	 		url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+	 		method: 'DELETE',
+	 		params: {
+	 			id: id
+	 		},
+	 		headers: {
+	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 		}
+	 	})
+ 		.success(function(res) {
+ 			$scope.player.addEventListener('onStateChange', reloadWhenDone);
+ 			$http({
+	 			url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+	 			method: 'GET',
+	 			params: {
+	 				part: 'snippet',
+	 				playlistId: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX', // whatever the playlist id actually is
+	 				maxResults: 50
+	 			},
+	 			headers: {
+	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+		 		}
+	 		})
+	 		.success(function(res) {
+	 			$scope.queue = res.items.map(function(item) {return {title: item.snippet.title, id: item.id, status: 'non'}});
+	 			$scope.queue[$scope.player.getPlaylistIndex()].status = 'current';
+	 		});
+ 		});
+ 	}
 });

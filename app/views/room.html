@@ -13,6 +13,7 @@
 			<h4>Queue</h4>
 			<ul class="list-unstyled">
 				<li class="queue-item" ng-repeat="video in queue" ng-class="video.status">
+					<button type="button" class="close pull-left" ng-click="removeFromPlaylist(video.id)">&times; </button>
 					{{video.title}}
 				</li>
 			</ul>
