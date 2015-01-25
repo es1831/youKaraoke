@@ -19,9 +19,7 @@
 
  	usersRef.on('child_added', function(dataSnapshot) {
  		console.log("CHILD ADDED TO USERS", dataSnapshot.val().data.google.displayName);
- 		$scope.$apply(function() {
- 			$scope.users.push(dataSnapshot.val().data.google.displayName);
- 		})
+		$scope.users.push(dataSnapshot.val().data.google.displayName);
  	});
 
 
@@ -33,6 +31,7 @@
 
  	var done = false;
  	$scope.player;
+ 	$scope.queue;
  	$scope.youTubeIframeAPIReady = false;
  	window.onYouTubeIframeAPIReady = runWhenAPIReady;
 
@@ -45,31 +44,54 @@
 	 			height: '390',
 	 			width: '640',
 	 			events: {
-	 				'onReady': onPlayerReady
-	 				// 'onStateChange': onPlayerStateChange
+	 				'onReady': onPlayerReady,
+	 				'onStateChange': onPlayerStateChange
 	 			}
 	 			//optional: playerVars
 	 		});
 	 };
 
  	function onPlayerReady(evt) {
-	 		$scope.player.loadPlaylist({
-	 			listType: 'playlist',
-	 			list: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX' // whatever the playlist id actually is
-	 		})
+ 		$scope.player.loadPlaylist({
+ 			listType: 'playlist',
+ 			list: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX' // whatever the playlist id actually is
+ 		});
  		// evt.target.playVideo();
+		$http({
+ 			url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+ 			method: 'GET',
+ 			params: {
+ 				part: 'snippet',
+ 				playlistId: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX', // whatever the playlist id actually is
+ 				maxResults: 50
+ 			},
+ 			headers: {
+ 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 		}
+ 		})
+ 		.success(function(res) {
+ 			$scope.queue = res.items.map(function(item) {return {title: item.snippet.title, status: 'non'}});
+ 			$scope.queue[0].status = 'current';
+ 		});
  	};
  	function onPlayerStateChange(evt) {
  		if (evt.data == YT.PlayerState.PLAYING && !done) {
  			setTimeout(stopVideo, 6000);
  			done = true;
  		}
+ 		if (evt.data == 0) {
+ 			var i = $scope.player.getPlaylistIndex();
+ 			if ($scope.queue[i - 1].status !== 'non' || i === 1) {
+	 			$scope.queue[i - 1].status = 'non';
+	 			$scope.queue[i].status = 'current';
+	 			$scope.$apply();
+ 			}
+ 		}
  	};
  	function stopVideo() {
  		$scope.player.stopVideo();
  	};
 
- 	// my crappy functions
  	$scope.searchResults = [];
  	$scope.search = function(query) {
  		$http({
@@ -81,16 +103,18 @@
 	 			maxResults: 4
 	 		},
 	 		headers: {
-	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
-	 			}
+ 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 		}
 	 	})
  		.success(function(res) {
  			$scope.searchResults = res.items;
  		});
  	};
+
  	var index = 0;
  	var reloadWhenDone = function(evt) {
 		if (evt.data == 0) {
+			// don't even look at me
 			if (typeof $scope.player.getPlaylistIndex() !== 'undefined') {
 				index = $scope.player.getPlaylistIndex();
 				$scope.player.loadPlaylist({
@@ -118,8 +142,7 @@
 	 					kind: 'youtube#video',
 	 					videoId: videoId
 	 				}
-	 			},
-
+	 			}
 	 		},
 	 		headers: {
 	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
@@ -128,10 +151,23 @@
  		.success(function(res) {
  			angular.element('#'+videoId).css({display: 'block'});
  			$scope.player.addEventListener('onStateChange', reloadWhenDone);
+
+ 			$http({
+	 			url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+	 			method: 'GET',
+	 			params: {
+	 				part: 'snippet',
+	 				playlistId: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX', // whatever the playlist id actually is
+	 				maxResults: 50
+	 			},
+	 			headers: {
+	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+		 		}
+	 		})
+	 		.success(function(res) {
+	 			$scope.queue = res.items.map(function(item) {return {title: item.snippet.title, status: 'non'}});
+	 			$scope.queue[$scope.player.getPlaylistIndex()].status = 'current';
+	 		});
  		});
  	};
- 	// listen for end of video (player.getPlayerState()), then refresh player
- 	// may need to keep array of ids anyway to keep an index for player.playVideoAt() or player.loadPlaylist()
- 	// player.getPlaylist() <-- array of ids
- 	// onStateChange
 });
