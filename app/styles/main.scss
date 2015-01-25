@@ -99,3 +99,16 @@ body {
   padding: 5px;
   text-align: center;
 }
+
+.added-message {
+  display: none;
+}
+
+a, a:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.current {
+  background-color: yellow;
+}
