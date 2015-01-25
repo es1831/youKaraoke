@@ -31,7 +31,7 @@ angular.module('youKaraokeApp')
         
 
         usersRef.on('child_added', function(dataSnapshot) {
-            console.log("CHILD ADDED TO USERS", dataSnapshot.val().google.displayName);
+            // console.log("CHILD ADDED TO USERS", dataSnapshot.val().google.displayName);
             $scope.$apply(function() {
                 if ($scope.users.indexOf(dataSnapshot.val().google.displayName) === -1) {
                     $scope.users.push(dataSnapshot.val().google.displayName);
@@ -41,9 +41,9 @@ angular.module('youKaraokeApp')
         });
 
         usersRef.on('child_removed', function(oldChildSnapshot) {
-            console.log("CHILD removed", oldChildSnapshot.val().google.displayName); {
+            // console.log("CHILD removed", oldChildSnapshot.val().google.displayName); {
               $scope.users.splice(($scope.users.indexOf(oldChildSnapshot.val().google.displayName)), 1)
-            }
+            // }
         });
 
         //melissa
@@ -81,6 +81,7 @@ angular.module('youKaraokeApp')
  			list: 'PLSZ99_lv80OxtO4gJzelWVB_e5HJDsLfX' // whatever the playlist id actually is
  		});
  		// evt.target.playVideo();
+ 		console.log($scope.currentUser);
 		$http({
  			url: 'https://www.googleapis.com/youtube/v3/playlistItems',
  			method: 'GET',
@@ -90,7 +91,7 @@ angular.module('youKaraokeApp')
  				maxResults: 50
  			},
  			headers: {
- 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+ 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 	 		}
  		})
  		.success(function(res) {
@@ -130,7 +131,7 @@ angular.module('youKaraokeApp')
 	 			maxResults: 4
 	 		},
 	 		headers: {
- 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+ 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 	 		}
 	 	})
  		.success(function(res) {
@@ -171,7 +172,7 @@ angular.module('youKaraokeApp')
 	 			}
 	 		},
 	 		headers: {
-	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 	 			}
 	 	})
  		.success(function(res) {
@@ -187,7 +188,7 @@ angular.module('youKaraokeApp')
 	 				maxResults: 50
 	 			},
 	 			headers: {
-	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 		 		}
 	 		})
 	 		.success(function(res) {
@@ -205,7 +206,7 @@ angular.module('youKaraokeApp')
 	 			id: id
 	 		},
 	 		headers: {
-	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 	 		}
 	 	})
  		.success(function(res) {
@@ -219,7 +220,7 @@ angular.module('youKaraokeApp')
 	 				maxResults: 50
 	 			},
 	 			headers: {
-	 				Authorization: 'Bearer ' + $scope.currentUser.data.google.accessToken
+	 				Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
 		 		}
 	 		})
 	 		.success(function(res) {
