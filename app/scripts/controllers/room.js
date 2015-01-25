@@ -29,16 +29,32 @@ angular.module('youKaraokeApp')
         var playlistRef = fb.room.child($routeParams.id).child("playlist");
 
         playlistRef.on('value', function(dataSnapshot){
-        	var temp = dataSnapshot.val();
-        	localStorageService.set("playlist", temp);
+        	localStorageService.set("playlist", dataSnapshot.val());
         	console.log("this is a playlist: ", localStorage["ls.playlist"]);
         })
 
-        $scope.playlist = localStorage["ls.playlist"];
+        $scope.playlist = JSON.parse(localStorage["ls.playlist"]);
+ 
 
-        console.log("this is a playlist outside: ", $scope.playlist);
 
-        
+//ASYNC ISSUES
+//
+//
+//
+
+/*        playlistRef.on('value', function(dataSnapshot){
+        	$scope.$apply(function(){
+        		$scope.playlist = dataSnapshot.val();
+        		console.log("this is a playlist: ", $scope.playlist);
+        	})
+
+        }) 
+        console.log("this is a playlist outside: ", $scope.playlist);*/
+
+
+
+
+
 
 
         //USERS
@@ -47,12 +63,12 @@ angular.module('youKaraokeApp')
 
         usersRef.on('child_added', function(dataSnapshot) {
             console.log("CHILD ADDED TO USERS", dataSnapshot.val().google.displayName);
-            $scope.$apply(function() {
                 if ($scope.users.indexOf(dataSnapshot.val().google.displayName) === -1) {
-                    $scope.users.push(dataSnapshot.val().google.displayName);
-                    usersRef.push($scope.currentUser);
+                	$scope.$apply(function() {
+                    	$scope.users.push(dataSnapshot.val().google.displayName);
+                    	usersRef.push($scope.currentUser);
+                    })
                 }
-            })
         });
 
         usersRef.on('child_removed', function(oldChildSnapshot) {
