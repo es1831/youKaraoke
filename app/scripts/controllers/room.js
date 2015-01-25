@@ -61,10 +61,25 @@ angular.module('youKaraokeApp')
 
         var videosRef = fb.room.child($routeParams.id).child("videos");
 
-/*        videosRef.on('child_added', function(dataSnapshot) {
+        videosRef.on('child_added', function(dataSnapshot) {
         	console.log("Videos been added ", dataSnapshot.val());
-            	$scope.player.addEventListener('onStateChange', reloadWhenDone);
-        });*/
+            $http({
+                    url: 'https://www.googleapis.com/youtube/v3/videos',
+                    method: 'GET',
+                    params: {
+                        part: 'snippet',
+                        id: dataSnapshot.val(),
+                        maxResults: 4
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
+                    }
+                })
+                .success(function(res) {
+                    $scope.queue2 = res;
+                    console.log("fuck this: ", $scope.queue2.items[0].snippet.title);
+                });	
+        });
 
 
         
@@ -202,6 +217,7 @@ angular.module('youKaraokeApp')
         var reloadWhenDone = function(evt) {
             if (evt.data == 0) {
                 // don't even look at me
+                console.log("WE MADE IT HEREREERERER");
                 if (typeof $scope.player.getPlaylistIndex() !== 'undefined') {
                     index = $scope.player.getPlaylistIndex();
                     $scope.player.loadPlaylist({
@@ -255,9 +271,6 @@ angular.module('youKaraokeApp')
                             }
                         })
                         .success(function(res) {
-                        	videosRef.on('child_added', function(dataSnapshot) {
-                        		console.log("video added :", dataSnapshot);
-                        		$scope.$apply(function(){
 	                            $scope.queue = res.items.map(function(item) {
 	                                return {
 	                                    title: item.snippet.title,
@@ -266,8 +279,6 @@ angular.module('youKaraokeApp')
 	                                }
 	                            });
                             $scope.queue[$scope.player.getPlaylistIndex()].status = 'current';
-                            })
-                            });
                         });
                         
                 });
