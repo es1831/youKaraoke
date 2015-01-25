@@ -38,7 +38,7 @@
  				}
  			},
  			headers: {
- 				Authorization: 'Bearer ' + creator.data.google.accessToken
+ 				Authorization: 'Bearer ' + creator.google.accessToken
  			}
  		})
  		.success(function(playlist) {

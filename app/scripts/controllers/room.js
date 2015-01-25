@@ -1,30 +1,54 @@
 'use strict';
 
- angular.module('youKaraokeApp')
- .controller('RoomCtrl', function ($scope, $http, auth, localStorageService, $routeParams, $location, fb) {
- 	localStorageService.set("lastsite", $routeParams.id);
- 	if(!auth.getCurrentUser()){
- 		$location.path('/main');
- 	}
- 	$scope.currentUser = auth.getCurrentUser();
- 	$scope.users = [];
+angular.module('youKaraokeApp')
+    .controller('RoomCtrl', function($scope, $http, auth, localStorageService, $routeParams, $location, fb) {
+        localStorageService.set("lastsite", $routeParams.id);
+        if (!auth.getCurrentUser()) {
+            $location.path('/main');
+        }
+        $scope.currentUser = auth.getCurrentUser();
+        $scope.users = [];
 
- 	fb.ref.on('child_added', function(dataSnapshot){
- 		// console.log(dataSnapshot.val());
- 	})
+        //CREATOR
+        var creatorRef = fb.room.child($routeParams.id).child("creator");
+        
+        creatorRef.on('value', function(dataSnapshot){
+        	$scope.creator = dataSnapshot.val();
+        }) 	 	
 
- 	 	console.log($routeParams.id);
- 	var usersRef = fb.room.child($routeParams.id).child("users");
- 	usersRef.push($scope.currentUser);
+        $scope.isCreator = function(){
+        	if($scope.creator.uid === $scope.currentUser.uid){
+        		return true;
+        	}
+        	else{
+        		return false;
+        	}
+        }
 
- 	usersRef.on('child_added', function(dataSnapshot) {
- 		console.log("CHILD ADDED TO USERS", dataSnapshot.val().data.google.displayName);
-		$scope.users.push(dataSnapshot.val().data.google.displayName);
- 	});
 
+        //USERS
+        var usersRef = fb.room.child($routeParams.id).child("users");
+        
 
-//melissa
- 	var tag = document.createElement('script');
+        usersRef.on('child_added', function(dataSnapshot) {
+            console.log("CHILD ADDED TO USERS", dataSnapshot.val().google.displayName);
+            $scope.$apply(function() {
+                if ($scope.users.indexOf(dataSnapshot.val().google.displayName) === -1) {
+                    $scope.users.push(dataSnapshot.val().google.displayName);
+                    usersRef.push($scope.currentUser);
+                }
+            })
+        });
+
+        usersRef.on('child_removed', function(oldChildSnapshot) {
+            console.log("CHILD removed", oldChildSnapshot.val().google.displayName); {
+              $scope.users.splice(($scope.users.indexOf(oldChildSnapshot.val().google.displayName)), 1)
+            }
+        });
+
+        //melissa
+
+        var tag = document.createElement('script');
  	tag.src = "https://www.youtube.com/iframe_api";
  	var firstScriptTag = document.getElementsByTagName('script')[0];
  	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
@@ -204,4 +228,4 @@
 	 		});
  		});
  	}
-});
+    });
