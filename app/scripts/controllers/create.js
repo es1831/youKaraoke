@@ -18,7 +18,8 @@
  	$scope.room = {
  		creator: creator,
  		playlist: [],
- 		users: []
+ 		users: [],
+ 		videos: []
  	}
 
  	console.log(creator);
