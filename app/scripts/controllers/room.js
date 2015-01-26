@@ -183,6 +183,11 @@ angular.module('youKaraokeApp')
                 }
             });
             $scope.queue[0].status = 'current';
+            currentRef.set({
+	        	title: $scope.queue[0].title,
+	        	pos: 50,
+	        	neg: 50
+	        });
         });
 
 /***** PLAYER FUNCTIONS *****/
@@ -208,11 +213,6 @@ angular.module('youKaraokeApp')
                 list: $scope.playlist[0].id
             });
             console.log($scope.playlist);
-            currentRef.set({
-	        	title: $scope.playlist[0].title,
-	        	pos: 50,
-	        	neg: 50
-	        });
         };
 
         function onPlayerStateChange(evt) {
