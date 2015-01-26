@@ -2,7 +2,6 @@
 
 angular.module('youKaraokeApp')
     .controller('RoomCtrl', function($scope, $http, auth, localStorageService, $routeParams, $location, fb, $firebase) {
-    	console.log($firebase);
         localStorageService.set("lastsite", $routeParams.id);
         if (!auth.getCurrentUser()) {
             $location.path('/main');
@@ -26,6 +25,9 @@ angular.module('youKaraokeApp')
                 return false;
             }
         }
+
+        // CURRENT?  i don't know i'm sorry if this is not okay
+        var currentRef = fb.room.child($routeParams.id).child('current');
 
         //PLAYLIST
 
@@ -67,22 +69,6 @@ angular.module('youKaraokeApp')
         	if ($scope.isCreator()) {
             	$scope.player.addEventListener('onStateChange', reloadWhenDone);
             }
-            // $http({
-            //         url: 'https://www.googleapis.com/youtube/v3/videos',
-            //         method: 'GET',
-            //         params: {
-            //             part: 'snippet',
-            //             id: dataSnapshot.val(),
-            //             maxResults: 4
-            //         },
-            //         headers: {
-            //             Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
-            //         }
-            //     })
-            //     .success(function(res) {
-            //         $scope.queue2 = res;
-            //         console.log("fuck this: ", $scope.queue2.items[0].snippet.title);
-            //     });	
 
 	        $http({
                 url: 'https://www.googleapis.com/youtube/v3/playlistItems',
@@ -97,7 +83,6 @@ angular.module('youKaraokeApp')
                 }
             })
             .success(function(res) {
-            	console.log(res);
                 $scope.queue = res.items.map(function(item) {
                     return {
                         title: item.snippet.title,
@@ -106,8 +91,6 @@ angular.module('youKaraokeApp')
                         status: 'non'
                     }
                 });
-                console.log($scope.queue);
-
                 // $scope.queue[$scope.player.playlistIndex()].status = 'current';
             });
         });
@@ -223,6 +206,12 @@ angular.module('youKaraokeApp')
                 listType: 'playlist',
                 list: $scope.playlist[0].id
             });
+            console.log($scope.playlist);
+            currentRef.set({
+	        	title: $scope.playlist[0].title,
+	        	pos: 50,
+	        	neg: 50
+	        });
         };
 
         function onPlayerStateChange(evt) {
@@ -323,8 +312,6 @@ angular.module('youKaraokeApp')
                 			}
                 		})
                 	})
-                	// console.log(videosArr[0]);
-                	// videoChildRef.remove();
 
                     $scope.player.addEventListener('onStateChange', reloadWhenDone);
                     $http({
