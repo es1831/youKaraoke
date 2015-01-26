@@ -149,6 +149,7 @@ angular.module('youKaraokeApp')
             if (evt.data == 0) {
                 if (typeof $scope.player.getPlaylistIndex() !== 'undefined') {
                     index = $scope.player.getPlaylistIndex();
+                    if (index == 0) index++; // why is this change not taking?1
                     $scope.player.loadPlaylist({
                         listType: 'playlist',
                         list: $scope.playlist[0].id,
@@ -183,6 +184,11 @@ angular.module('youKaraokeApp')
                 }
             });
             $scope.queue[0].status = 'current';
+            currentRef.set({
+	        	title: $scope.queue[0].title,
+	        	pos: 50,
+	        	neg: 50
+	        });
         });
 
 /***** PLAYER FUNCTIONS *****/
@@ -208,11 +214,6 @@ angular.module('youKaraokeApp')
                 list: $scope.playlist[0].id
             });
             console.log($scope.playlist);
-            currentRef.set({
-	        	title: $scope.playlist[0].title,
-	        	pos: 50,
-	        	neg: 50
-	        });
         };
 
         function onPlayerStateChange(evt) {
