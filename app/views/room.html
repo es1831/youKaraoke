@@ -4,19 +4,19 @@
 			Creator of this Awesome Party: {{creator.google.displayName}}
 	      <div id="player" class = "jumbotron" class="center-block" ng-show = "isCreator()"></div>
 	      <h3 ng-show="!isCreator()">Now Playing: {{current.title}}</h3>
-	      <h3>Bar</h3>
+		    <div class="panel panel-default">
+	      <h4>Opinion</h4>
 		    <progress>
 		    	<bar ng-repeat="bar in stacked track by $index" value="bar.value" type="{{bar.type}}">
 		    		{{bar.value}}%
 		    	</bar>
 		    </progress>
-		    <div class="panel panel-default">
-		    	<h5>Give some feedback</h5>
-		    	<button type="button" class="btn btn-danger" ng-click="increment(-2)">Boo!</button>
+		    	<h4>Give some feedback</h4>
 		    	<button type="button" class="btn btn-info" ng-click="increment(2)">Woo!</button>
+		    	<button type="button" class="btn btn-danger" ng-click="increment(-2)">Boo!</button>
 		    </div>
 		    <div class="panel panel-default">
-		      People Partying:
+		      <h4>People Partying:</h4>
 	        </div>
 		</div>
 		<div class="col-lg-3" class="queue">
@@ -33,7 +33,7 @@
 		<div class="col-lg-12">
 	      <span ng-repeat="user in users">{{user}}!  </span>
 			<div class="panel panel-info">
-				<div class="panel-heading"><h5>Search for more additions to the playlist</h5></div>
+				<div class="panel-heading"><h4>Search for more additions to the playlist</h4></div>
 				<form class="form-inline search" id="center" ng-submit="search(query)">
 					<input type="text" class="form-control" ng-model="query" /> 
 					<button class="btn btn-default">Search</button>

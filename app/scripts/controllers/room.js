@@ -8,7 +8,7 @@ angular.module('youKaraokeApp')
         }
         $scope.currentUser = auth.getCurrentUser();
         $scope.users = [];
-        $scope.stacked = [{value: 50, type: 'danger'}, {value: 50, type: 'info'}];
+        $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
 
         //CREATOR
         var creatorRef = fb.room.child($routeParams.id).child("creator");
@@ -46,8 +46,8 @@ angular.module('youKaraokeApp')
 	        	$scope.$apply();
         	}
         	else {
-	        	$scope.stacked[0].value = $scope.current.neg;
-	        	$scope.stacked[1].value = $scope.current.pos;
+	        	$scope.stacked[0].value = $scope.current.pos;
+	        	$scope.stacked[1].value = $scope.current.neg;
 	        	$scope.$apply();
         	}
         })
@@ -400,12 +400,12 @@ angular.module('youKaraokeApp')
 
 /***** VOTING FUNCTIONS OMG THIS CONTROLLER IS SO LONG WHY DO I EXIST *****/
         $scope.increment = function(num) {
-        	$scope.stacked[0].value -= num;
-        	$scope.stacked[1].value += num;
+        	$scope.stacked[0].value += num;
+        	$scope.stacked[1].value -= num;
         	currentRef.set({
 		        	title: $scope.current.title,
-		        	pos: $scope.stacked[1].value,
-		        	neg: $scope.stacked[0].value
+		        	pos: $scope.stacked[0].value,
+		        	neg: $scope.stacked[1].value
 		        });
         	$scope.$apply();
         }
