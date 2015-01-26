@@ -1,8 +1,9 @@
 <div class="container">
 	<div class="row">
 		<div class="col-lg-9">
-			<div id="player" class="center-block" ng-show = "isCreator()"></div>
-      Creator of this Awesome Party: {{creator.google.displayName}}
+			Creator of this Awesome Party: {{creator.google.displayName}}
+      <div id="player" class = "jumbotron" class="center-block" ng-show = "isCreator()"></div>
+      
       <div ng-show="!isCreator()">Now Playing</div>
 		</div>
 		<div class="col-lg-3" class="queue">
@@ -34,6 +35,4 @@
 			</ul>
 		</div>
 	</div>
-Party People:
-{{users}}
 </div>

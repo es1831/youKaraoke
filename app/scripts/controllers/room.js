@@ -190,10 +190,11 @@ angular.module('youKaraokeApp')
             $scope.youTubeIframeAPIReady = window.youTubeIframeAPIReady = true;
             $scope.player = new YT.Player('player', {
                 playerVars: {
-                    autoplay: 0
+                    autoplay: 0,
+                    iv_load_policy: 3
                 },
-                height: '390',
-                width: '640',
+                height: '480',
+                width: '853',
                 events: {
                     'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
