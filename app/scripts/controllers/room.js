@@ -118,7 +118,7 @@ angular.module('youKaraokeApp')
                         status: 'non'
                     }
                 });
-                if ($scope.isCreator()) $scope.queue[$scope.player.playlistIndex()].status = 'current';
+                if ($scope.isCreator()) $scope.queue[$scope.player.getPlaylistIndex()].status = 'current';
             });
         });
 
