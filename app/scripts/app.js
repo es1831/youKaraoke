@@ -17,7 +17,8 @@ angular
     'ngSanitize',
     'ngTouch',
     'firebase',
-    'LocalStorageModule'
+    'LocalStorageModule',
+    'ui.bootstrap'
   ])
   .config(function ($routeProvider) {
     $routeProvider
