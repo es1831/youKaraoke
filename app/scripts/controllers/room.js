@@ -385,7 +385,7 @@ angular.module('youKaraokeApp')
                             },
                             headers: {
                                 Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
-                            }
+                            } //
                         })
                         .success(function(res) {
                             $scope.queue = res.items.map(function(item) {
