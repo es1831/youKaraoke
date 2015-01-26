@@ -8,11 +8,14 @@ angular.module('youKaraokeApp')
         }
         $scope.currentUser = auth.getCurrentUser();
         $scope.users = [];
+        $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
+        $scope.queueIndex = 0; // nothing i do makes any sense i'm so sorry
 
         //CREATOR
         var creatorRef = fb.room.child($routeParams.id).child("creator");
 
         creatorRef.on('value', function(dataSnapshot) {
+        	$scope.creator = dataSnapshot.val();
             localStorageService.set("creator", dataSnapshot.val());
         })
 
@@ -28,9 +31,31 @@ angular.module('youKaraokeApp')
 
         // CURRENT?  i don't know i'm sorry if this is not okay
         var currentRef = fb.room.child($routeParams.id).child('current');
+        currentRef.on('value', function(dataSnapshot) {
+        	console.log("current values have changed: ", dataSnapshot.val());
+        	$scope.current = dataSnapshot.val();
+        	if(dataSnapshot.val().neg >= 80 && $scope.isCreator()) {
+        		$scope.player.nextVideo();
+        		var index = $scope.player.getPlaylistIndex();
+        		currentRef.set({
+		        	title: $scope.queue[index + 1].title,
+		        	pos: 50,
+		        	neg: 50
+		        });
+		        $scope.queue[index].status = null;
+		        $scope.queue[index + 1].status = 'current';
+	        	$scope.$apply();
+        	}
+        	else {
+	        	$scope.stacked[0].value = $scope.current.pos;
+	        	$scope.stacked[1].value = $scope.current.neg;
+	        	$scope.queue[queueIndex].status = null;
+	        	$scope.queue[++queueIndex].status = 'current'; // don't know if this will work
+	        	$scope.$apply();
+        	}
+        })
 
         //PLAYLIST
-
         var playlistRef = fb.room.child($routeParams.id).child("playlist");
 
         playlistRef.on('value', function(dataSnapshot) {
@@ -42,14 +67,15 @@ angular.module('youKaraokeApp')
 
         console.log("this outsdie: ", $scope.playlist);
 
-
+        // var playlistArr = $firebase(playlistRef).$asArray();
+        // playlistArr.$loaded().then(function(playlist) {
+        // 	$scope.playlist = playlist;
+        // 	console.log("this is a playlist: ", $scope.playlist[0]);
+        // 	$scope.apply();
+        // });
 
 
         //ASYNC ISSUES
-        //
-        //
-        //
-
         /*        playlistRef.on('value', function(dataSnapshot){
                 	$scope.$apply(function(){
                 		$scope.playlist = dataSnapshot.val();
@@ -70,35 +96,57 @@ angular.module('youKaraokeApp')
                 $scope.player.addEventListener('onStateChange', reloadWhenDone);
             }
 
-            $http({
-                    url: 'https://www.googleapis.com/youtube/v3/playlistItems',
-                    method: 'GET',
-                    params: {
-                        part: 'snippet',
-                        playlistId: $scope.playlist[0].id, // whatever the playlist id actually is
-                        maxResults: 50
-                    },
-                    headers: {
-                        Authorization: 'Bearer ' + $scope.creator.google.accessToken
+	        $http({
+                url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+                method: 'GET',
+                params: {
+                    part: 'snippet',
+                    playlistId: $scope.playlist[0].id,
+                    maxResults: 50
+                },
+                headers: {
+                    Authorization: 'Bearer ' + $scope.creator.google.accessToken
+                }
+            })
+            .success(function(res) {
+                $scope.queue = res.items.map(function(item) {
+                    return {
+                        title: item.snippet.title,
+                        id: item.id,
+                        videoId: item.snippet.resourceId.videoId,
+                        status: 'non'
                     }
-                })
-                .success(function(res) {
-                    $scope.queue = res.items.map(function(item) {
-                        return {
-                            title: item.snippet.title,
-                            id: item.id,
-                            videoId: item.snippet.resourceId.videoId,
-                            status: 'non'
-                        }
-                    });
-                    // $scope.queue[$scope.player.playlistIndex()].status = 'current';
                 });
+                if ($scope.isCreator()) $scope.queue[$scope.player.playlistIndex()].status = 'current';
+            });
         });
 
-        videosRef.on('child_removed', function(dataSnapshot) {
-            console.log("Video removed ", dataSnapshot.val());
-        })
-
+		videosRef.on('child_removed', function(dataSnapshot) {
+			console.log("Video removed ", dataSnapshot.val());
+	        $http({
+                url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+                method: 'GET',
+                params: {
+                    part: 'snippet',
+                    playlistId: $scope.playlist[0].id,
+                    maxResults: 50
+                },
+                headers: {
+                    Authorization: 'Bearer ' + $scope.creator.google.accessToken
+                }
+            })
+            .success(function(res) {
+                $scope.queue = res.items.map(function(item) {
+                    return {
+                        title: item.snippet.title,
+                        id: item.id,
+                        videoId: item.snippet.resourceId.videoId,
+                        status: 'non'
+                    }
+                });
+                if ($scope.isCreator()) $scope.queue[$scope.player.playlistIndex()].status = 'current';
+            });
+		});
 
 
 
@@ -149,7 +197,7 @@ angular.module('youKaraokeApp')
             if (evt.data == 0) {
                 if (typeof $scope.player.getPlaylistIndex() !== 'undefined') {
                     index = $scope.player.getPlaylistIndex();
-                    if (index == 0) index++; // why is this change not taking?1
+                    if (index == 0) index++; // I DON'T KNOW OKAY
                     $scope.player.loadPlaylist({
                         listType: 'playlist',
                         list: $scope.playlist[0].id,
@@ -225,13 +273,20 @@ angular.module('youKaraokeApp')
                 var i = $scope.player.getPlaylistIndex();
                 console.log(i);
                 if (i === 0) {
-                    $scope.queue[0].status = 'non';
-                    $scope.queue[1].status = 'current';
-                } else if ($scope.queue[i - 1].status !== 'non' || i === 1) {
+                	$scope.queue[0].status = 'non';
+                	$scope.queue[1].status = 'current';
+                	i++
+                }
+                else if ($scope.queue[i - 1].status !== 'non' || i === 1) {
                     $scope.queue[i - 1].status = 'non';
                     $scope.queue[i].status = 'current';
                     $scope.$apply();
                 }
+                currentRef.set({
+		        	title: $scope.queue[i].title,
+		        	pos: 50,
+		        	neg: 50
+		        });
             }
         };
 
@@ -345,4 +400,15 @@ angular.module('youKaraokeApp')
                 });
         }
 
+/***** VOTING FUNCTIONS OMG THIS CONTROLLER IS SO LONG WHY DO I EXIST *****/
+        $scope.increment = function(num) {
+        	$scope.stacked[0].value += num;
+        	$scope.stacked[1].value -= num;
+        	currentRef.set({
+		        	title: $scope.current.title,
+		        	pos: $scope.stacked[0].value,
+		        	neg: $scope.stacked[1].value
+		        });
+        	$scope.$apply();
+        }
     });
