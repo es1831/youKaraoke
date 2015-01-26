@@ -65,42 +65,42 @@ angular.module('youKaraokeApp')
         var videosRef = fb.room.child($routeParams.id).child("videos");
 
         videosRef.on('child_added', function(dataSnapshot) {
-        	console.log("Videos been added ", dataSnapshot.val());
-        	if ($scope.isCreator()) {
-            	$scope.player.addEventListener('onStateChange', reloadWhenDone);
+            console.log("Videos been added ", dataSnapshot.val());
+            if ($scope.isCreator()) {
+                $scope.player.addEventListener('onStateChange', reloadWhenDone);
             }
 
-	        $http({
-                url: 'https://www.googleapis.com/youtube/v3/playlistItems',
-                method: 'GET',
-                params: {
-                    part: 'snippet',
-                    playlistId: $scope.playlist[0].id, // whatever the playlist id actually is
-                    maxResults: 50
-                },
-                headers: {
-                    Authorization: 'Bearer ' + $scope.creator.google.accessToken
-                }
-            })
-            .success(function(res) {
-                $scope.queue = res.items.map(function(item) {
-                    return {
-                        title: item.snippet.title,
-                        id: item.id,
-                        videoId: item.snippet.resourceId.videoId,
-                        status: 'non'
+            $http({
+                    url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+                    method: 'GET',
+                    params: {
+                        part: 'snippet',
+                        playlistId: $scope.playlist[0].id, // whatever the playlist id actually is
+                        maxResults: 50
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + $scope.creator.google.accessToken
                     }
+                })
+                .success(function(res) {
+                    $scope.queue = res.items.map(function(item) {
+                        return {
+                            title: item.snippet.title,
+                            id: item.id,
+                            videoId: item.snippet.resourceId.videoId,
+                            status: 'non'
+                        }
+                    });
+                    // $scope.queue[$scope.player.playlistIndex()].status = 'current';
                 });
-                // $scope.queue[$scope.player.playlistIndex()].status = 'current';
-            });
         });
 
-		videosRef.on('child_removed', function(dataSnapshot) {
-			console.log("Video removed ", dataSnapshot.val());
-		})
+        videosRef.on('child_removed', function(dataSnapshot) {
+            console.log("Video removed ", dataSnapshot.val());
+        })
 
 
-        
+
 
 
 
@@ -123,29 +123,29 @@ angular.module('youKaraokeApp')
             }
         });
 
-        
+
 
 
         if ($scope.isCreator()) {
-	        var tag = document.createElement('script');
-	        tag.src = "https://www.youtube.com/iframe_api";
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
 
-	        var firstScriptTag = document.getElementsByTagName('script')[0];
-	        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-	        $scope.player;
-	        $scope.queue;
-	        $scope.youTubeIframeAPIReady = false;
-	        window.onYouTubeIframeAPIReady = runWhenAPIReady;
-        	
-	        if (window.YT) runWhenAPIReady();
+            $scope.player;
+            $scope.queue;
+            $scope.youTubeIframeAPIReady = false;
+            window.onYouTubeIframeAPIReady = runWhenAPIReady;
+
+            if (window.YT) runWhenAPIReady();
         }
 
         var done = false;
 
-/***** RELOADING EVENT LISTENER.  GETS ADDED UPON CHILD ADD *****/
+        /***** RELOADING EVENT LISTENER.  GETS ADDED UPON CHILD ADD *****/
 
-	  	var reloadWhenDone = function(evt) {
+        var reloadWhenDone = function(evt) {
             if (evt.data == 0) {
                 if (typeof $scope.player.getPlaylistIndex() !== 'undefined') {
                     index = $scope.player.getPlaylistIndex();
@@ -160,38 +160,38 @@ angular.module('youKaraokeApp')
             }
         }
 
-/***** POPULATE QUEUE IMMEDIATELY *****/
+        /***** POPULATE QUEUE IMMEDIATELY *****/
 
-       $http({
-            url: 'https://www.googleapis.com/youtube/v3/playlistItems',
-            method: 'GET',
-            params: {
-                part: 'snippet',
-                playlistId: $scope.playlist[0].id,
-                maxResults: 50
-            },
-            headers: {
-                Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
-            }
-        })
-        .success(function(res) {
-            console.log(res);
-            $scope.queue = res.items.map(function(item) {
-                return {
-                    title: item.snippet.title,
-                    id: item.id,
-                    status: 'non'
+        $http({
+                url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+                method: 'GET',
+                params: {
+                    part: 'snippet',
+                    playlistId: $scope.playlist[0].id,
+                    maxResults: 50
+                },
+                headers: {
+                    Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
                 }
+            })
+            .success(function(res) {
+                console.log(res);
+                $scope.queue = res.items.map(function(item) {
+                    return {
+                        title: item.snippet.title,
+                        id: item.id,
+                        status: 'non'
+                    }
+                });
+                $scope.queue[0].status = 'current';
+                currentRef.set({
+                    title: $scope.queue[0].title,
+                    pos: 50,
+                    neg: 50
+                });
             });
-            $scope.queue[0].status = 'current';
-            currentRef.set({
-	        	title: $scope.queue[0].title,
-	        	pos: 50,
-	        	neg: 50
-	        });
-        });
 
-/***** PLAYER FUNCTIONS *****/
+        /***** PLAYER FUNCTIONS *****/
         function runWhenAPIReady() {
             $scope.youTubeIframeAPIReady = window.youTubeIframeAPIReady = true;
             $scope.player = new YT.Player('player', {
@@ -225,10 +225,9 @@ angular.module('youKaraokeApp')
                 var i = $scope.player.getPlaylistIndex();
                 console.log(i);
                 if (i === 0) {
-                	$scope.queue[0].status = 'non';
-                	$scope.queue[1].status = 'current';
-                }
-                else if ($scope.queue[i - 1].status !== 'non' || i === 1) {
+                    $scope.queue[0].status = 'non';
+                    $scope.queue[1].status = 'current';
+                } else if ($scope.queue[i - 1].status !== 'non' || i === 1) {
                     $scope.queue[i - 1].status = 'non';
                     $scope.queue[i].status = 'current';
                     $scope.$apply();
@@ -240,7 +239,7 @@ angular.module('youKaraokeApp')
             $scope.player.stopVideo();
         };
 
-/***** SEARCH *****/
+        /***** SEARCH *****/
 
         $scope.searchResults = [];
         $scope.search = function(query) {
@@ -264,10 +263,10 @@ angular.module('youKaraokeApp')
 
         var index = 0;
 
-/***** ADD TO PLAYLIST--FOR USERS ALSO *****/
+        /***** ADD TO PLAYLIST--FOR USERS ALSO *****/
 
         $scope.addToPlaylist = function(videoId) {
-        	console.log($scope.creator.google.accessToken);
+            console.log($scope.creator.google.accessToken);
             $http({
                     url: 'https://www.googleapis.com/youtube/v3/playlistItems',
                     method: 'POST',
@@ -291,14 +290,14 @@ angular.module('youKaraokeApp')
                     angular.element('#' + videoId).css({
                         display: 'block'
                     });
-		        	videosRef.push(videoId);
+                    videosRef.push(videoId);
                 });
         };
 
-/***** REMOVE FROM PLAYLIST - FOR CREATOR ONLY *****/
+        /***** REMOVE FROM PLAYLIST - FOR CREATOR ONLY *****/
 
-		$scope.removeFromPlaylist = function(video) {
-			if (!$scope.isCreator()) return false;
+        $scope.removeFromPlaylist = function(video) {
+            if (!$scope.isCreator()) return false;
             $http({
                     url: 'https://www.googleapis.com/youtube/v3/playlistItems',
                     method: 'DELETE',
@@ -310,15 +309,15 @@ angular.module('youKaraokeApp')
                     }
                 })
                 .success(function(res) {
-                	var videosArr = $firebase(videosRef).$asArray();
-                	videosArr.$loaded().then(function(){
-                		videosArr.forEach(function(item) {
-                			if (item.$value == video.videoId) {
-			                	var videoChildRef = fb.room.child($routeParams.id).child("videos").child(item.$id);
-                				videoChildRef.remove();
-                			}
-                		})
-                	})
+                    var videosArr = $firebase(videosRef).$asArray();
+                    videosArr.$loaded().then(function() {
+                        videosArr.forEach(function(item) {
+                            if (item.$value == video.videoId) {
+                                var videoChildRef = fb.room.child($routeParams.id).child("videos").child(item.$id);
+                                videoChildRef.remove();
+                            }
+                        })
+                    })
 
                     $scope.player.addEventListener('onStateChange', reloadWhenDone);
                     $http({
@@ -345,5 +344,5 @@ angular.module('youKaraokeApp')
                         });
                 });
         }
-        
+
     });
