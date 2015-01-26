@@ -16,11 +16,15 @@
     "angularfire": "~0.9.1",
     "angular-ui-router": "~0.2.13",
     "angular-local-storage": "~0.1.5",
-    "ui.bootstrap": "~0.12.0"
+    "ui.bootstrap": "~0.12.0",
+    "angular-bootstrap": "~0.12.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.3.0",
     "angular-scenario": "~1.3.0"
   },
-  "appPath": "app"
+  "appPath": "app",
+  "resolutions": {
+    "angular": "^1.3.0"
+  }
 }
