@@ -49,8 +49,8 @@ angular.module('youKaraokeApp')
         	else {
 	        	$scope.stacked[0].value = $scope.current.pos;
 	        	$scope.stacked[1].value = $scope.current.neg;
-	        	$scope.queue[queueIndex].status = null;
-	        	$scope.queue[++queueIndex].status = 'current'; // don't know if this will work
+	        	$scope.queue[$scope.queueIndex].status = null;
+	        	$scope.queue[++$scope.queueIndex].status = 'current'; // don't know if this will work
 	        	$scope.$apply();
         	}
         })
