@@ -149,6 +149,7 @@ angular.module('youKaraokeApp')
             if (evt.data == 0) {
                 if (typeof $scope.player.getPlaylistIndex() !== 'undefined') {
                     index = $scope.player.getPlaylistIndex();
+                    if (index == 0) index++;
                     $scope.player.loadPlaylist({
                         listType: 'playlist',
                         list: $scope.playlist[0].id,
