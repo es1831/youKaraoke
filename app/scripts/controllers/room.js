@@ -75,7 +75,7 @@ angular.module('youKaraokeApp')
                 method: 'GET',
                 params: {
                     part: 'snippet',
-                    playlistId: $scope.playlist[0].id, // whatever the playlist id actually is
+                    playlistId: $scope.playlist[0].id,
                     maxResults: 50
                 },
                 headers: {
@@ -97,6 +97,29 @@ angular.module('youKaraokeApp')
 
 		videosRef.on('child_removed', function(dataSnapshot) {
 			console.log("Video removed ", dataSnapshot.val());
+	        $http({
+                url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+                method: 'GET',
+                params: {
+                    part: 'snippet',
+                    playlistId: $scope.playlist[0].id,
+                    maxResults: 50
+                },
+                headers: {
+                    Authorization: 'Bearer ' + $scope.creator.google.accessToken
+                }
+            })
+            .success(function(res) {
+                $scope.queue = res.items.map(function(item) {
+                    return {
+                        title: item.snippet.title,
+                        id: item.id,
+                        videoId: item.snippet.resourceId.videoId,
+                        status: 'non'
+                    }
+                });
+                // $scope.queue[$scope.player.playlistIndex()].status = 'current';
+            });
 		})
 
 
@@ -149,7 +172,7 @@ angular.module('youKaraokeApp')
             if (evt.data == 0) {
                 if (typeof $scope.player.getPlaylistIndex() !== 'undefined') {
                     index = $scope.player.getPlaylistIndex();
-                    if (index == 0) index++; // why is this change not taking?1
+                    if (index == 0) index++; // I DON'T KNOW OKAY
                     $scope.player.loadPlaylist({
                         listType: 'playlist',
                         list: $scope.playlist[0].id,
