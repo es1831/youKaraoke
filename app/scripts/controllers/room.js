@@ -33,9 +33,23 @@ angular.module('youKaraokeApp')
         currentRef.on('value', function(dataSnapshot) {
         	console.log("current values have changed: ", dataSnapshot.val());
         	$scope.current = dataSnapshot.val();
-        	$scope.stacked[0].value = $scope.current.pos;
-        	$scope.stacked[1].value = $scope.current.neg;
-        	$scope.$apply();
+        	if(dataSnapshot.val().neg >= 80 && $scope.isCreator()) {
+        		$scope.player.nextVideo();
+        		var index = $scope.player.getPlaylistIndex();
+        		currentRef.set({
+		        	title: $scope.queue[index + 1].title,
+		        	pos: 50,
+		        	neg: 50
+		        });
+		        $scope.queue[index].status = null;
+		        $scope.queue[index + 1].status = 'current';
+	        	$scope.$apply();
+        	}
+        	else {
+	        	$scope.stacked[0].value = $scope.current.neg;
+	        	$scope.stacked[1].value = $scope.current.pos;
+	        	$scope.$apply();
+        	}
         })
 
         //PLAYLIST
@@ -100,7 +114,7 @@ angular.module('youKaraokeApp')
                         status: 'non'
                     }
                 });
-                // $scope.queue[$scope.player.playlistIndex()].status = 'current';
+                if ($scope.isCreator()) $scope.queue[$scope.player.playlistIndex()].status = 'current';
             });
         });
 
@@ -127,7 +141,7 @@ angular.module('youKaraokeApp')
                         status: 'non'
                     }
                 });
-                // $scope.queue[$scope.player.playlistIndex()].status = 'current';
+                if ($scope.isCreator()) $scope.queue[$scope.player.playlistIndex()].status = 'current';
             });
 		})
 
@@ -271,7 +285,6 @@ angular.module('youKaraokeApp')
 		        	pos: 50,
 		        	neg: 50
 		        });
-
             }
         };
 
@@ -391,8 +404,8 @@ angular.module('youKaraokeApp')
         	$scope.stacked[1].value += num;
         	currentRef.set({
 		        	title: $scope.current.title,
-		        	pos: $scope.stacked[0].value,
-		        	neg: $scope.stacked[1].value
+		        	pos: $scope.stacked[1].value,
+		        	neg: $scope.stacked[0].value
 		        });
         	$scope.$apply();
         }

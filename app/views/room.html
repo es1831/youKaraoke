@@ -10,11 +10,14 @@
 		    		{{bar.value}}%
 		    	</bar>
 		    </progress>
-		    <div>
-		    	<h5>Give some feedback!</h5>
+		    <div class="panel panel-default">
+		    	<h5>Give some feedback</h5>
 		    	<button type="button" class="btn btn-danger" ng-click="increment(-2)">Boo!</button>
 		    	<button type="button" class="btn btn-info" ng-click="increment(2)">Woo!</button>
 		    </div>
+		    <div class="panel panel-default">
+		      People Partying:
+	        </div>
 		</div>
 		<div class="col-lg-3" class="queue">
 			<h4>Queue</h4>
@@ -27,25 +30,26 @@
 		</div>
 	</div>
 	<div class="row">
-      People Partying:
-      <span ng-repeat="user in users">{{user}}!  </span>
-		<div class="center-block">
-			<h5>Search for more additions to the playlist</h5>
-			<form class="form-inline" id="center" ng-submit="search(query)">
-				<input type="text" class="form-control" ng-model="query" /> 
-				<button class="btn btn-default">Search</button>
-			</form>
-		</div>
-		<div class="col-lg-12" id="search-results">
-			<ul class="unstyled">
-				<li class="result col-lg-3" ng-repeat="result in searchResults">
-					<a ng-click="addToPlaylist(result.id.videoId)">
-					<img src="http://img.youtube.com/vi/{{result.id.videoId}}/default.jpg" />
-					<p>{{result.snippet.title}}</p>
-					<div class="added-message bg-success" id="{{result.id.videoId}}">Added to playlist</div>
-					</a>
-				</li>
-			</ul>
+		<div class="col-lg-12">
+	      <span ng-repeat="user in users">{{user}}!  </span>
+			<div class="panel panel-info">
+				<div class="panel-heading"><h5>Search for more additions to the playlist</h5></div>
+				<form class="form-inline search" id="center" ng-submit="search(query)">
+					<input type="text" class="form-control" ng-model="query" /> 
+					<button class="btn btn-default">Search</button>
+				</form>
+			</div>
+			<div class="col-lg-12" id="search-results">
+				<ul class="unstyled">
+					<li class="result col-lg-3" ng-repeat="result in searchResults">
+						<a ng-click="addToPlaylist(result.id.videoId)">
+						<img src="http://img.youtube.com/vi/{{result.id.videoId}}/default.jpg" />
+						<p>{{result.snippet.title}}</p>
+						<div class="added-message bg-success" id="{{result.id.videoId}}">Added to playlist</div>
+						</a>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 </div>
