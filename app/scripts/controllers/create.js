@@ -8,7 +8,7 @@
  * Controller of the youKaraokeApp
  */
  angular.module('youKaraokeApp')
- .controller('CreateCtrl', function ($scope, $http, fb, auth, $location) {
+ .controller('CreateCtrl', function ($scope, $http, fb, auth, $location, localStorageService) {
  	var creator = auth.getCurrentUser();
  	var api = "AIzaSyABJumn6ZK-Ru4vt1U0hq7wQA99Z6EhXLE";
  	var oAuth = "900189317018-kphukaabv9r3sljqf6hunvfg91s7ihir.apps.googleusercontent.com";
@@ -76,25 +76,26 @@
  			var roomKey = key.toString().split("room/")[1];
 
  			$http({
-	 		url: 'https://www.googleapis.com/youtube/v3/playlistItems',
-	 		method: 'POST',
-	 		params: {
-	 			part: 'snippet',
-	 		},
-	 		data: {
-	 			snippet: {
-	 				playlistId: playlist.id,
-	 				resourceId: {
-	 					kind: 'youtube#video',
-	 					videoId: $scope.videoId
-	 				}
-	 			}
-	 		},
-	 		headers: {
+		 		url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+		 		method: 'POST',
+		 		params: {
+		 			part: 'snippet',
+		 		},
+		 		data: {
+		 			snippet: {
+		 				playlistId: playlist.id,
+		 				resourceId: {
+		 					kind: 'youtube#video',
+		 					videoId: $scope.videoId
+		 				}
+		 			}
+		 		},
+		 		headers: {
 	 				Authorization: 'Bearer ' + creator.google.accessToken
 	 			}
 		 	})
 		 	.success(function(){
+		 		localStorageService.set("creator", creator);
 	 			$location.path('/room/' + roomKey);
 		 	});
  		});

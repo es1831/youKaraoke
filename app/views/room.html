@@ -3,8 +3,13 @@
 		<div class="col-lg-9">
 			Creator of this Awesome Party: {{creator.google.displayName}}
       <div id="player" class = "jumbotron" class="center-block" ng-show = "isCreator()"></div>
-      
-      <div ng-show="!isCreator()">Now Playing</div>
+      <h3>Bar</h3>
+	    <progress>
+	    	<bar ng-repeat="bar in stacked track by $index" value="bar.value" type="{{bar.type}}">
+	    		<span ng-hide="bar.value < 5">{{bar.value}}%</span>
+	    	</bar>
+	    </progress>
+      <div ng-show="!isCreator()">Now Playing: {{current.title}}</div>
 		</div>
 		<div class="col-lg-3" class="queue">
 			<h4>Queue</h4>

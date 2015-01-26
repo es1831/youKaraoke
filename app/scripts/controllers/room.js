@@ -13,6 +13,7 @@ angular.module('youKaraokeApp')
         var creatorRef = fb.room.child($routeParams.id).child("creator");
 
         creatorRef.on('value', function(dataSnapshot) {
+        	$scope.creator = dataSnapshot.val();
             localStorageService.set("creator", dataSnapshot.val());
         })
 
@@ -28,9 +29,13 @@ angular.module('youKaraokeApp')
 
         // CURRENT?  i don't know i'm sorry if this is not okay
         var currentRef = fb.room.child($routeParams.id).child('current');
+        currentRef.on('value', function(dataSnapshot) {
+        	console.log("current video has changed: ", dataSnapshot.val());
+        	$scope.current = dataSnapshot.val();
+        	$scope.$apply();
+        })
 
         //PLAYLIST
-
         var playlistRef = fb.room.child($routeParams.id).child("playlist");
 
         playlistRef.on('value', function(dataSnapshot) {
@@ -42,14 +47,15 @@ angular.module('youKaraokeApp')
 
         console.log("this outsdie: ", $scope.playlist);
 
-
+        // var playlistArr = $firebase(playlistRef).$asArray();
+        // playlistArr.$loaded().then(function(playlist) {
+        // 	$scope.playlist = playlist;
+        // 	console.log("this is a playlist: ", $scope.playlist[0]);
+        // 	$scope.apply();
+        // });
 
 
         //ASYNC ISSUES
-        //
-        //
-        //
-
         /*        playlistRef.on('value', function(dataSnapshot){
                 	$scope.$apply(function(){
                 		$scope.playlist = dataSnapshot.val();
@@ -250,12 +256,19 @@ angular.module('youKaraokeApp')
                 if (i === 0) {
                 	$scope.queue[0].status = 'non';
                 	$scope.queue[1].status = 'current';
+                	i++
                 }
                 else if ($scope.queue[i - 1].status !== 'non' || i === 1) {
                     $scope.queue[i - 1].status = 'non';
                     $scope.queue[i].status = 'current';
                     $scope.$apply();
                 }
+                currentRef.set({
+		        	title: $scope.queue[i].title,
+		        	pos: 50,
+		        	neg: 50
+		        });
+
             }
         };
 
