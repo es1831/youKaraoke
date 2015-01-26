@@ -8,6 +8,7 @@ angular.module('youKaraokeApp')
         }
         $scope.currentUser = auth.getCurrentUser();
         $scope.users = [];
+        $scope.stacked = [{value: 50, type: 'danger'}, {value: 50, type: 'info'}];
 
         //CREATOR
         var creatorRef = fb.room.child($routeParams.id).child("creator");
@@ -30,8 +31,10 @@ angular.module('youKaraokeApp')
         // CURRENT?  i don't know i'm sorry if this is not okay
         var currentRef = fb.room.child($routeParams.id).child('current');
         currentRef.on('value', function(dataSnapshot) {
-        	console.log("current video has changed: ", dataSnapshot.val());
+        	console.log("current values have changed: ", dataSnapshot.val());
         	$scope.current = dataSnapshot.val();
+        	$scope.stacked[0].value = $scope.current.pos;
+        	$scope.stacked[1].value = $scope.current.neg;
         	$scope.$apply();
         })
 
@@ -381,5 +384,16 @@ angular.module('youKaraokeApp')
                         });
                 });
         }
-        
+
+/***** VOTING FUNCTIONS OMG THIS CONTROLLER IS SO LONG WHY DO I EXIST *****/
+        $scope.increment = function(num) {
+        	$scope.stacked[0].value -= num;
+        	$scope.stacked[1].value += num;
+        	currentRef.set({
+		        	title: $scope.current.title,
+		        	pos: $scope.stacked[0].value,
+		        	neg: $scope.stacked[1].value
+		        });
+        	$scope.$apply();
+        }
     });

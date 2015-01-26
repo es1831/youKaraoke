@@ -2,14 +2,19 @@
 	<div class="row">
 		<div class="col-lg-9">
 			Creator of this Awesome Party: {{creator.google.displayName}}
-      <div id="player" class = "jumbotron" class="center-block" ng-show = "isCreator()"></div>
-      <h3>Bar</h3>
-	    <progress>
-	    	<bar ng-repeat="bar in stacked track by $index" value="bar.value" type="{{bar.type}}">
-	    		<span ng-hide="bar.value < 5">{{bar.value}}%</span>
-	    	</bar>
-	    </progress>
-      <div ng-show="!isCreator()">Now Playing: {{current.title}}</div>
+	      <div id="player" class = "jumbotron" class="center-block" ng-show = "isCreator()"></div>
+	      <h3 ng-show="!isCreator()">Now Playing: {{current.title}}</h3>
+	      <h3>Bar</h3>
+		    <progress>
+		    	<bar ng-repeat="bar in stacked track by $index" value="bar.value" type="{{bar.type}}">
+		    		{{bar.value}}%
+		    	</bar>
+		    </progress>
+		    <div>
+		    	<h5>Give some feedback!</h5>
+		    	<button type="button" class="btn btn-danger" ng-click="increment(-2)">Boo!</button>
+		    	<button type="button" class="btn btn-info" ng-click="increment(2)">Woo!</button>
+		    </div>
 		</div>
 		<div class="col-lg-3" class="queue">
 			<h4>Queue</h4>
@@ -22,13 +27,14 @@
 		</div>
 	</div>
 	<div class="row">
+      People Partying:
+      <span ng-repeat="user in users">{{user}}!  </span>
 		<div class="center-block">
+			<h5>Search for more additions to the playlist</h5>
 			<form class="form-inline" id="center" ng-submit="search(query)">
 				<input type="text" class="form-control" ng-model="query" /> 
 				<button class="btn btn-default">Search</button>
 			</form>
-      People Partying:
-      {{users}}
 		</div>
 		<div class="col-lg-12" id="search-results">
 			<ul class="unstyled">
