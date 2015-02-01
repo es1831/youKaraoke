@@ -1,6 +1,4 @@
 # youKaraoke
-Real-Time Karaoke App Utilizing YouTube API
-
 Project for Fullstack Academy's January 2015 "hackathon."
 
 - Makes use of YouTube IFrame API and Data API to allow a user to create a virtual karaoke room that other clients can join
