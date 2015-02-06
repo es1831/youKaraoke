@@ -15,11 +15,28 @@ angular.module('youKaraokeApp')
         var creatorRef = fb.room.child($routeParams.id).child("creator");
 
         creatorRef.on('value', function(dataSnapshot) {
+
         	$scope.creator = dataSnapshot.val();
-            localStorageService.set("creator", dataSnapshot.val());
+            // localStorageService.set("creator", dataSnapshot.val());
+
+            if ($scope.isCreator()) {
+                var tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+
+                var firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+                $scope.player;
+                $scope.queue;
+                $scope.youTubeIframeAPIReady = false;
+                window.onYouTubeIframeAPIReady = runWhenAPIReady;
+
+                if (window.YT) runWhenAPIReady();
+            }
+
         })
 
-        $scope.creator = JSON.parse(localStorage["ls.creator"]);
+        // $scope.creator = JSON.parse(localStorage["ls.creator"]);
 
         $scope.isCreator = function() {
             if ($scope.creator.uid === $scope.currentUser.uid) {
@@ -172,23 +189,6 @@ angular.module('youKaraokeApp')
             }
         });
 
-
-
-
-        if ($scope.isCreator()) {
-            var tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-
-            var firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-            $scope.player;
-            $scope.queue;
-            $scope.youTubeIframeAPIReady = false;
-            window.onYouTubeIframeAPIReady = runWhenAPIReady;
-
-            if (window.YT) runWhenAPIReady();
-        }
 
         var done = false;
 
