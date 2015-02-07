@@ -17,7 +17,6 @@ angular.module('youKaraokeApp')
         creatorRef.on('value', function(dataSnapshot) {
 
         	$scope.creator = dataSnapshot.val();
-            // localStorageService.set("creator", dataSnapshot.val());
 
             if ($scope.isCreator()) {
                 var tag = document.createElement('script');
@@ -36,7 +35,6 @@ angular.module('youKaraokeApp')
 
         })
 
-        // $scope.creator = JSON.parse(localStorage["ls.creator"]);
 
         $scope.isCreator = function() {
             if ($scope.creator.uid === $scope.currentUser.uid) {
@@ -77,13 +75,38 @@ angular.module('youKaraokeApp')
         var playlistRef = fb.room.child($routeParams.id).child("playlist");
 
         playlistRef.on('value', function(dataSnapshot) {
-            localStorageService.set("playlist", dataSnapshot.val());
-            console.log("this is a playlist: ", localStorage["ls.playlist"]);
+            $scope.playlist = dataSnapshot.val();
+            /***** POPULATE QUEUE IMMEDIATELY *****/
+
+            $http({
+                    url: 'https://www.googleapis.com/youtube/v3/playlistItems',
+                    method: 'GET',
+                    params: {
+                        part: 'snippet',
+                        playlistId: $scope.playlist[0].id,
+                        maxResults: 50
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
+                    }
+                })
+                .success(function(res) {
+                    console.log(res);
+                    $scope.queue = res.items.map(function(item) {
+                        return {
+                            title: item.snippet.title,
+                            id: item.id,
+                            status: 'non'
+                        }
+                    });
+                    if($scope.isCreator()) $scope.queue[0].status = 'current';
+                    currentRef.set({
+                        title: $scope.queue[0].title,
+                        pos: 50,
+                        neg: 50
+                    });
+                });
         })
-
-        $scope.playlist = JSON.parse(localStorage["ls.playlist"]);
-
-        console.log("this outsdie: ", $scope.playlist);
 
         // var playlistArr = $firebase(playlistRef).$asArray();
         // playlistArr.$loaded().then(function(playlist) {
@@ -208,37 +231,6 @@ angular.module('youKaraokeApp')
                 $scope.player.removeEventListener('onStateChange', reloadWhenDone);
             }
         }
-
-        /***** POPULATE QUEUE IMMEDIATELY *****/
-
-        $http({
-                url: 'https://www.googleapis.com/youtube/v3/playlistItems',
-                method: 'GET',
-                params: {
-                    part: 'snippet',
-                    playlistId: $scope.playlist[0].id,
-                    maxResults: 50
-                },
-                headers: {
-                    Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
-                }
-            })
-            .success(function(res) {
-                console.log(res);
-                $scope.queue = res.items.map(function(item) {
-                    return {
-                        title: item.snippet.title,
-                        id: item.id,
-                        status: 'non'
-                    }
-                });
-                if($scope.isCreator()) $scope.queue[0].status = 'current';
-                currentRef.set({
-                    title: $scope.queue[0].title,
-                    pos: 50,
-                    neg: 50
-                });
-            });
 
         /***** PLAYER FUNCTIONS *****/
         function runWhenAPIReady() {
@@ -410,6 +402,5 @@ angular.module('youKaraokeApp')
 		        	pos: $scope.stacked[0].value,
 		        	neg: $scope.stacked[1].value
 		        });
-        	$scope.$apply();
         }
     });
