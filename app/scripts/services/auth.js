@@ -15,7 +15,7 @@ angular.module('youKaraokeApp')
 
 	return {
 
-	setCurrentUser : function(userData){
+	setCurrentUser : function(userData, cb){
     	CurrentUser = userData;
     	localStorageService.set('user', CurrentUser);
 

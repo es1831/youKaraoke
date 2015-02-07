@@ -17,9 +17,9 @@
  			} else {
  				console.log("Authenticated successfully with payload:", authData);
  				auth.setCurrentUser(authData);
- 				
  				if(localStorage["ls.lastsite"]){
  					$location.path('/room/'+localStorage["ls.lastsite"]);
+ 					$scope.$apply();
  				}
  				else{
  					$location.path('/create');
