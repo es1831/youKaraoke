@@ -6,6 +6,9 @@ angular.module('youKaraokeApp')
         if (!auth.getCurrentUser()) {
             $location.path('/main');
         }
+        else{
+            localStorageService.remove('lastsite');
+        }
         $scope.currentUser = auth.getCurrentUser();
         $scope.users = [];
         $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
@@ -404,3 +407,4 @@ angular.module('youKaraokeApp')
 		        });
         }
     });
+
