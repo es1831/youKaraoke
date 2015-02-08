@@ -33,6 +33,7 @@ body {
 .container-fluid{
   padding: 0px;
 }
+
 .header {
   border-bottom: 1px solid #e5e5e5;
 
@@ -294,4 +295,16 @@ footer {
 
 p.copyright {
     margin: 15px 0 0;
+}
+
+.jumbotron {
+  background: url(../images/disco.jpg) no-repeat center center;
+  background-position: 0% 13%;
+  background-size: cover;
+  padding: 100px 0;
+  color: #fff;
+}
+
+.content {
+  width: 50%;
 }
