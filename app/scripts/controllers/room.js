@@ -11,7 +11,6 @@ angular.module('youKaraokeApp')
         }
         $scope.currentUser = auth.getCurrentUser();
         $scope.users = [];
-        $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
         // $scope.queueIndex = 0; // nothing i do makes any sense i'm so sorry
 
         //CREATOR
@@ -19,9 +18,10 @@ angular.module('youKaraokeApp')
 
         creatorRef.on('value', function(dataSnapshot) {
 
-        	$scope.creator = dataSnapshot.val();
+            $scope.creator = dataSnapshot.val();
 
             if ($scope.isCreator()) {
+                $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
                 var tag = document.createElement('script');
                 tag.src = "https://www.youtube.com/iframe_api";
 
@@ -50,7 +50,7 @@ angular.module('youKaraokeApp')
         // CURRENT?  i don't know i'm sorry if this is not okay
         var currentRef = fb.room.child($routeParams.id).child('current');
         currentRef.on('value', function(dataSnapshot) {
-        	console.log("current values have changed: ", dataSnapshot.val());
+        	// console.log("current values have changed: ", dataSnapshot.val());
         	$scope.current = dataSnapshot.val();
         	if(dataSnapshot.val().neg >= 80 && $scope.isCreator()) {
         		$scope.player.nextVideo();
@@ -94,7 +94,7 @@ angular.module('youKaraokeApp')
                     }
                 })
                 .success(function(res) {
-                    console.log(res);
+                    // console.log(res);
                     $scope.queue = res.items.map(function(item) {
                         return {
                             title: item.snippet.title,
@@ -135,7 +135,7 @@ angular.module('youKaraokeApp')
         var videosRef = fb.room.child($routeParams.id).child("videos");
 
         videosRef.on('child_added', function(dataSnapshot) {
-            console.log("Videos been added ", dataSnapshot.val());
+            // console.log("Videos been added ", dataSnapshot.val());
             if ($scope.isCreator()) {
                 $scope.player.addEventListener('onStateChange', reloadWhenDone);
             }
@@ -166,7 +166,7 @@ angular.module('youKaraokeApp')
         });
 
 		videosRef.on('child_removed', function(dataSnapshot) {
-			console.log("Video removed ", dataSnapshot.val());
+			// console.log("Video removed ", dataSnapshot.val());
 	        $http({
                 url: 'https://www.googleapis.com/youtube/v3/playlistItems',
                 method: 'GET',
@@ -200,7 +200,7 @@ angular.module('youKaraokeApp')
         var usersRef = fb.room.child($routeParams.id).child("users");
 
         usersRef.on('child_added', function(dataSnapshot) {
-            console.log("CHILD ADDED TO USERS", dataSnapshot.val().google.displayName);
+            // console.log("CHILD ADDED TO USERS", dataSnapshot.val().google.displayName);
             if ($scope.users.indexOf(dataSnapshot.val().google.displayName) === -1) {
                 $scope.$apply(function() {
                     $scope.users.push(dataSnapshot.val().google.displayName);
@@ -210,9 +210,8 @@ angular.module('youKaraokeApp')
         });
 
         usersRef.on('child_removed', function(oldChildSnapshot) {
-            console.log("CHILD removed", oldChildSnapshot.val().google.displayName); {
-                $scope.users.splice(($scope.users.indexOf(oldChildSnapshot.val().google.displayName)), 1)
-            }
+            // console.log("CHILD removed", oldChildSnapshot.val().google.displayName);
+            $scope.users.splice(($scope.users.indexOf(oldChildSnapshot.val().google.displayName)), 1);
         });
 
 
@@ -257,7 +256,7 @@ angular.module('youKaraokeApp')
                 listType: 'playlist',
                 list: $scope.playlist[0].id
             });
-            console.log($scope.playlist);
+            // console.log($scope.playlist);
         };
 
         function onPlayerStateChange(evt) {
@@ -267,7 +266,7 @@ angular.module('youKaraokeApp')
             }
             if (evt.data == 0) {
                 var i = $scope.player.getPlaylistIndex();
-                console.log(i);
+                // console.log(i);
                 if (i === 0) {
                 	$scope.queue[0].status = 'non';
                 	$scope.queue[1].status = 'current';
@@ -317,7 +316,7 @@ angular.module('youKaraokeApp')
         /***** ADD TO PLAYLIST--FOR USERS ALSO *****/
 
         $scope.addToPlaylist = function(videoId) {
-            console.log($scope.creator.google.accessToken);
+            // console.log($scope.creator.google.accessToken);
             $http({
                     url: 'https://www.googleapis.com/youtube/v3/playlistItems',
                     method: 'POST',
