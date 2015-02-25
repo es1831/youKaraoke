@@ -11,7 +11,6 @@ angular.module('youKaraokeApp')
         }
         $scope.currentUser = auth.getCurrentUser();
         $scope.users = [];
-        $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
         // $scope.queueIndex = 0; // nothing i do makes any sense i'm so sorry
 
         //CREATOR
@@ -19,9 +18,10 @@ angular.module('youKaraokeApp')
 
         creatorRef.on('value', function(dataSnapshot) {
 
-        	$scope.creator = dataSnapshot.val();
+            $scope.creator = dataSnapshot.val();
 
             if ($scope.isCreator()) {
+                $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
                 var tag = document.createElement('script');
                 tag.src = "https://www.youtube.com/iframe_api";
 
