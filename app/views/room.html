@@ -4,13 +4,13 @@
 			Creator of this Awesome Party: {{creator.google.displayName}}
 	      <div id="player" class="jumbotron" class="center-block" ng-show="isCreator()"></div>
 	      <h3 ng-show="!isCreator()">Now Playing: {{current.title}}</h3>
-		    <div class="panel panel-default">
-	      <h4>Opinion</h4>
-		    <progress>
-		    	<bar ng-repeat="bar in stacked track by $index" value="bar.value" type="{{bar.type}}">
-		    		{{bar.value}}%
-		    	</bar>
-		    </progress>
+		  <div class="panel panel-default text-center">
+		        <h4>Opinion</h4>
+			    <progress>
+			    	<bar ng-repeat="bar in stacked track by $index" value="bar.value" type="{{bar.type}}">
+			    		{{bar.value}}%
+			    	</bar>
+			    </progress>
 		    	<h4>Give some feedback</h4>
 		    	<button type="button" class="btn btn-info" ng-click="increment(2)">Woo!</button>
 		    	<button type="button" class="btn btn-danger" ng-click="increment(-2)">Boo!</button>

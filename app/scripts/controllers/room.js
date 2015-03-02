@@ -65,8 +65,7 @@ angular.module('youKaraokeApp')
 	        	$scope.$apply();
         	}
         	else {
-	        	$scope.stacked[0].value = $scope.current.pos;
-	        	$scope.stacked[1].value = $scope.current.neg;
+                $scope.stacked = [{value: $scope.current.pos, type: 'info'}, {value: $scope.current.neg, type: 'danger'}];
 	        	// $scope.queue[$scope.queueIndex].status = null;
                 // $scope.queueIndex++;
 	        	// if ($scope.queue[$scope.queueIndex]) $scope.queue[$scope.queueIndex].status = 'current'; // don't know if this will work
@@ -243,7 +242,7 @@ angular.module('youKaraokeApp')
                     iv_load_policy: 3
                 },
                 height: '480',
-                width: '853',
+                width: '836',
                 events: {
                     'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
