@@ -150,7 +150,7 @@ h6 {
 }
 
 .topnav {
-    font-size: 14px; 
+    font-size: 14px;
 }
 
 .lead {
@@ -314,4 +314,9 @@ p.copyright {
 
 .row {
   margin-right: 0;
+}
+.scrollable {
+    height: auto;
+    max-height: 500px;
+    overflow-x: hidden;
 }

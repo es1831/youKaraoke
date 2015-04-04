@@ -22,6 +22,7 @@
 		</div>
 		<div class="col-lg-3" id = "top" class="queue">
 			<h4>Queue</h4>
+      <div class="scrollable">
 			<ul class="list-unstyled">
 				<li class="queue-item" ng-repeat="video in queue" ng-class="video.status">
 					<button type="button" class="close pull-left" ng-click="removeFromPlaylist(video)" ng-show="isCreator()">&times; </button>
