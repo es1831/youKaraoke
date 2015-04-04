@@ -15,13 +15,13 @@ angular.module('youKaraokeApp')
 
         //CREATOR
         var creatorRef = fb.room.child($routeParams.id).child("creator");
-
+        $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
         creatorRef.on('value', function(dataSnapshot) {
 
             $scope.creator = dataSnapshot.val();
 
             if ($scope.isCreator()) {
-                $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
+
                 var tag = document.createElement('script');
                 tag.src = "https://www.youtube.com/iframe_api";
 
@@ -40,11 +40,16 @@ angular.module('youKaraokeApp')
 
 
         $scope.isCreator = function() {
+          if($scope.creator){
             if ($scope.creator.uid === $scope.currentUser.uid) {
                 return true;
             } else {
                 return false;
             }
+          }
+          else{
+            return false;
+          }
         }
 
         // CURRENT?  i don't know i'm sorry if this is not okay
@@ -126,7 +131,7 @@ angular.module('youKaraokeApp')
                 		console.log("this is a playlist: ", $scope.playlist);
                 	})
 
-                }) 
+                })
         console.log("this is a playlist outside: ", $scope.playlist);*/
 
 
