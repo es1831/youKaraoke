@@ -15,7 +15,6 @@ angular.module('youKaraokeApp')
 
         //CREATOR
         var creatorRef = fb.room.child($routeParams.id).child("creator");
-        $scope.stacked = [{value: 50, type: 'info'}, {value: 50, type: 'danger'}];
         creatorRef.on('value', function(dataSnapshot) {
 
             $scope.creator = dataSnapshot.val();
@@ -70,8 +69,10 @@ angular.module('youKaraokeApp')
 	        	$scope.$apply();
         	}
         	else {
-	        	$scope.stacked[0].value = $scope.current.pos;
-	        	$scope.stacked[1].value = $scope.current.neg;
+                $scope.stacked = [
+                        {value: $scope.current.pos, type: 'info'},
+                        {value: $scope.current.neg, type: 'danger'}
+                    ];
 	        	// $scope.queue[$scope.queueIndex].status = null;
                 // $scope.queueIndex++;
 	        	// if ($scope.queue[$scope.queueIndex]) $scope.queue[$scope.queueIndex].status = 'current'; // don't know if this will work
@@ -107,12 +108,14 @@ angular.module('youKaraokeApp')
                             status: 'non'
                         }
                     });
-                    if($scope.isCreator()) $scope.queue[0].status = 'current';
-                    currentRef.set({
-                        title: $scope.queue[0].title,
-                        pos: 50,
-                        neg: 50
-                    });
+                    if($scope.isCreator()) {
+                        $scope.queue[0].status = 'current';
+                        currentRef.set({
+                            title: $scope.queue[0].title,
+                            pos: 50,
+                            neg: 50
+                        });
+                    }
                 });
         })
 
