@@ -305,7 +305,9 @@ angular.module('youKaraokeApp')
                     params: {
                         part: 'snippet',
                         q: 'karaoke ' + query,
-                        maxResults: 4
+                        maxResults: 20,
+                        type: 'video',
+                        videoEmbeddable: 'true'
                     },
                     headers: {
                         Authorization: 'Bearer ' + $scope.currentUser.google.accessToken
