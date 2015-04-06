@@ -13,8 +13,10 @@
 		<div class="center-block" ng-show="!videoId.length">
 			Choose a song to start off your playlist! (required)
 			<div>
-				<input type="text" ng-model="query" /> 
+        <form>
+				<input type="text" ng-model="query" />
 				<button type="button" class="btn btn-default" ng-click="search(query)">Search</button>
+        </form>
 			</div>
 		</div>
 	</div>
